@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/akbersyed/dev/FtcRobotController/TeamCode"
+    name=":TeamCode"
+    type="APP"
+    maven="FtcRobotController:TeamCode:"
+    gradle="7.2.0"
+    buildFolder="build"
+    bootClassPath="/Users/akbersyed/Library/Android/sdk/platforms/android-29/android.jar:/Users/akbersyed/Library/Android/sdk/build-tools/30.0.3/core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-29"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>
