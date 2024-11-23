@@ -3,6 +3,21 @@
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
 
 ## Welcome!
+This is a fork of the offical FTC SDK for the 24-25 season. It includes the source code for the FTC SDK, as well as the example code for the 2024-2025 FTC goBILDA Starter Kit Robot: [https://www.gobilda.com/ftc-starter-bot-resource-guide-into-the-deep/](https://www.gobilda.com/ftc-starter-bot-resource-guide-into-the-deep/)
+
+This repo includes the Java File for the example teleop opmode for the Starter Kit Robot.
+
+## How to use? 
+If you are already an Android Studio team, and are using git, you can add this repo as a git remote, and this will allow you to easily pull just the example file which this repo adds to the SDK. ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep. You can add a remote to Android Studio by going to Git, then Manage Remotes in the navigation bar. Once you've added this Remote, click on the branch icon near the name of your curent project and find the new remote. There should be a branch called "Add-Starter-Robot-Code", select that, and select "Pull into (yourbranch) using merge". There may be a conflict with the readme file, just accept yours. And you'll be off to the races!
+
+If you do not already have a github project for your team/season, you can clone this repository. Just make sure to note that only the branch titled "Add-Starter-Robot-Code" has the example file.
+
+If you would like to just download the driver files and example code, you can find them here: just click the download button in the top right and put this file in your teamcode folder.
+
+### Direct link to example code:
+https://github.com/goBILDA-Official/FtcRobotController-Add-Starter-Kit-Code/blob/Add-Starer-Kit-Code/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep.java
+
+## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
 ## Requirements
