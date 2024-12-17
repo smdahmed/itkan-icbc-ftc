@@ -7,6 +7,10 @@ This is a fork of the offical FTC SDK for the 24-25 season. It includes the sour
 
 This repo includes the Java File for the example teleop opmode for the Starter Kit Robot.
 
+## Simulator links
+Repository to download for virtual simulator for use in Android Studio: https://github.com/Ibrahimohib/ICBC-ITKAN-FTC-VIRTUAL-SIM
+Link to online simulator: https://sim.vrobotsim.online/homepage.html
+
 ## How to use? 
 If you are already an Android Studio team, and are using git, you can add this repo as a git remote, and this will allow you to easily pull just the example file which this repo adds to the SDK. ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep. You can add a remote to Android Studio by going to Git, then Manage Remotes in the navigation bar. Once you've added this Remote, click on the branch icon near the name of your curent project and find the new remote. There should be a branch called "Add-Starter-Robot-Code", select that, and select "Pull into (yourbranch) using merge". There may be a conflict with the readme file, just accept yours. And you'll be off to the races!
 
