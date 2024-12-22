@@ -18,11 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -48,9 +51,9 @@ public class TestAutonomous extends LinearOpMode {
     private DcMotor         backLeft    = null;
   	  //    private DcMotor intakeMotor;
 
-    private DcMotor m8;
+    private Servo m8;
     private DcMotor m5;
-    private DcMotor m6releasesample;
+    private CRServo m6releasesample;
   
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -69,9 +72,9 @@ public class TestAutonomous extends LinearOpMode {
     backRight = hardwareMap.get(DcMotor.class, "right_front_drive");
     backLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
       
-    m8 = hardwareMap.get(DcMotor.class, "m8");
-    m5 = hardwareMap.get(DcMotor.class, "m5");
-    m6releasesample = hardwareMap.get(DcMotor.class, "m6-release sample");
+    m8 = hardwareMap.get(Servo.class, "wrist");
+    m5 = hardwareMap.get(DcMotor.class, "left_arm");
+    m6releasesample = hardwareMap.get(CRServo.class, "intake");
       
       
     //leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);  
@@ -94,7 +97,7 @@ public class TestAutonomous extends LinearOpMode {
     // Stop - not sure if we need the stop in between each step - but added it
     backLeft.setPower(0);
     backRight.setPower(0);
-    sleep(100)  
+    sleep(100);
       
     //Go Straight
     backLeft.setPower(1.0);
@@ -104,7 +107,7 @@ public class TestAutonomous extends LinearOpMode {
     // Stop
     backLeft.setPower(0);
     backRight.setPower(0);
-    sleep(100)  
+    sleep(100);
       
     // Turn Left
     backLeft.setPower(1.0);
@@ -114,7 +117,7 @@ public class TestAutonomous extends LinearOpMode {
      // Stop
     backLeft.setPower(0);
     backRight.setPower(0);
-    sleep(100)  
+    sleep(100);
  
     //Go Straight
     backLeft.setPower(1.0);
@@ -124,7 +127,7 @@ public class TestAutonomous extends LinearOpMode {
     // Stop
     backLeft.setPower(0);
     backRight.setPower(0);
-    sleep(100)  
+    sleep(100);
      
     // Turn Right
     backLeft.setPower(-1.0);
@@ -134,11 +137,11 @@ public class TestAutonomous extends LinearOpMode {
     // Stop
     backLeft.setPower(0);
     backRight.setPower(0);
-    sleep(100)  
+    sleep(100);
     
     // Put the arm down  
-    m8.setPower(1.0);
-    sleep(4000)
+    m8.setPosition(0.5);
+    sleep(4000);
 
     // TODO - figure out how to intake the sample
       
