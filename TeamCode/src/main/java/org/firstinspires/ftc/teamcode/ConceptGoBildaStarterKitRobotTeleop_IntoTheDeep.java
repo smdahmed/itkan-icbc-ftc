@@ -76,6 +76,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public DcMotor  armMotor    = null; //the arm motor
     public CRServo  intake      = null; //the active intake servo
     public Servo    wrist       = null; //the wrist servo
+    public DcMotor  viperKit    = null; // the viper kit!!!
 
 
     /* This constant is the number of encoder ticks for each degree of rotation of the arm.
@@ -112,6 +113,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double ARM_SCORE_SAMPLE_IN_LOW   = 160 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 120 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
+    final double VIPER_OUT                 = 1464 * ARM_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -129,6 +131,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     double armPosition = (int)ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
 
+    // Variable used to set the Viper Kit to a specific Position
+    double viperPosition = 0;
 
     @Override
     public void runOpMode() {
@@ -146,6 +150,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         leftDrive = hardwareMap.get(DcMotor.class, "left_front_drive"); //the left drivetrain motor
         rightDrive = hardwareMap.get(DcMotor.class, "right_front_drive"); //the right drivetrain motor
         armMotor = hardwareMap.get(DcMotor.class, "left_arm"); //the arm motor
+        viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
@@ -160,9 +165,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperKit.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        /*This sets the maximum current that the control hub will apply to the arm before throwing a flag */
+        /*This sets the maximum current that the control hub will apply to the arm and Viper Kit before throwing a flag */
         ((DcMotorEx) armMotor).setCurrentAlert(5,CurrentUnit.AMPS);
+        ((DcMotorEx) viperKit).setCurrentAlert(5, CurrentUnit.AMPS);
 
 
         /* Before starting the armMotor. We'll make sure the TargetPosition is set to 0.
@@ -172,6 +179,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // Same for Viper Kit.
+        // Setting TargetPosition to 0, setting runMode to RUN_TO_POSITION. Also asking it to stop and reset encoder
+        viperKit.setTargetPosition(0);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -270,47 +282,47 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 armPosition = ARM_COLLECT;
                 wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
-                }
+            }
 
-                else if (gamepad2.left_bumper){
-                    /* This is about 20° up from the collecting position to clear the barrier
-                    Note here that we don't set the wrist position or the intake power when we
-                    select this "mode", this means that the intake and wrist will continue what
-                    they were doing before we clicked left bumper. */
-                    armPosition = ARM_CLEAR_BARRIER;
-                }
+            else if (gamepad2.left_bumper){
+                /* This is about 20° up from the collecting position to clear the barrier
+                Note here that we don't set the wrist position or the intake power when we
+                select this "mode", this means that the intake and wrist will continue what
+                they were doing before we clicked left bumper. */
+                armPosition = ARM_CLEAR_BARRIER;
+            }
 
-                else if (gamepad2.y){
-                    /* This is the correct height to score the sample in the LOW BASKET */
-                    armPosition = ARM_SCORE_SAMPLE_IN_LOW;
-                }
+            else if (gamepad2.y){
+                /* This is the correct height to score the sample in the LOW BASKET */
+                armPosition = ARM_SCORE_SAMPLE_IN_LOW;
+            }
 
-                else if (gamepad2.dpad_left) {
-                    /* This turns off the intake, folds in the wrist, and moves the arm
-                    back to folded inside the robot. This is also the starting configuration */
-                    armPosition = ARM_COLLAPSED_INTO_ROBOT;
-                    intake.setPower(INTAKE_OFF);
-                    wrist.setPosition(WRIST_FOLDED_IN);
-                }
+            else if (gamepad2.dpad_left) {
+                /* This turns off the intake, folds in the wrist, and moves the arm
+                back to folded inside the robot. This is also the starting configuration */
+                armPosition = ARM_COLLAPSED_INTO_ROBOT;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
 
-                else if (gamepad2.dpad_right){
-                    /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
-                    armPosition = ARM_SCORE_SPECIMEN;
-                    wrist.setPosition(WRIST_FOLDED_IN);
-                }
+            else if (gamepad2.dpad_right){
+                /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
+                armPosition = ARM_SCORE_SPECIMEN;
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
 
-                else if (gamepad2.dpad_up){
-                    /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
-                    armPosition = ARM_ATTACH_HANGING_HOOK;
-                    intake.setPower(INTAKE_OFF);
-                    wrist.setPosition(WRIST_FOLDED_IN);
-                }
+            else if (gamepad2.dpad_up){
+                /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
+                armPosition = ARM_ATTACH_HANGING_HOOK;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
 
-                else if (gamepad2.dpad_down){
-                    /* this moves the arm down to lift the robot up once it has been hooked */
-                    armPosition = ARM_WINCH_ROBOT;
-                    intake.setPower(INTAKE_OFF);
-                    wrist.setPosition(WRIST_FOLDED_IN);
+            else if (gamepad2.dpad_down){
+                /* this moves the arm down to lift the robot up once it has been hooked */
+                armPosition = ARM_WINCH_ROBOT;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
             }
 
 
@@ -332,6 +344,12 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             ((DcMotorEx) armMotor).setVelocity(2100);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the target position to the position the driver asked for
+            viperKit.setTargetPosition((int) (viperPosition));
+            // Set the velocity of the motor and use setMode to run
+            ((DcMotorEx) viperKit).setVelocity(2100);
+            viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             /* TECH TIP: Encoders, integers, and doubles
             Encoders report when the motor has moved a specified angle. They send out pulses which
