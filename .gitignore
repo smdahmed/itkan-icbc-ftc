@@ -13,7 +13,7 @@
 # Ignore build files
 gradle/
 build/
-TeamCode/
+TeamCode/build
 
 # Package Files #
 *.jar
