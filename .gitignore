@@ -11,8 +11,9 @@
 .mtj.tmp/
 
 # Ignore build files
-.gradle/
+gradle/
 build/
+TeamCode/
 
 # Package Files #
 *.jar
