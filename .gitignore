@@ -15,6 +15,7 @@ gradle/
 build/
 TeamCode/build
 .gradle/
+*.gradle
 
 # Android Studio
 *.iml
