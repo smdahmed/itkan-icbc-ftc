@@ -20,8 +20,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -33,129 +31,141 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ * <p>
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all linear OpModes contain.
- *
+ * <p>
  * Remove a @Disabled the on the next line or two (if present) to add this opmode to the Driver Station OpMode list,
  * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
  */
 
-@Autonomous(name="Robot: Test Auto", group="Robot")
+@Autonomous(name = "Robot: Test Auto", group = "Robot")
 public class TestAutonomous extends LinearOpMode {
-  
-        /* Declare OpMode members. */
-   // private DcMotor         leftDrive   = null;
-    //private DcMotor         rightDrive  = null;
-    private DcMotor         backRight   = null;
-    private DcMotor         backLeft    = null;
-  	  //    private DcMotor intakeMotor;
+
+    /* Declare OpMode members. */
+    private DcMotor backRight = null;
+    private DcMotor backLeft = null;
 
     private Servo m8;
     private DcMotor m5;
     private CRServo m6releasesample;
-  
-    private ElapsedTime     runtime = new ElapsedTime();
 
+    private final ElapsedTime runtime = new ElapsedTime();
 
-    static final double     FORWARD_SPEED = 0.4;
-    static final double     TURN_SPEED    = 0.5;
+    private static final boolean USE_SIMULATOR = false;
 
+    private static final double FORWARD_SPEED_ROBOT = 0.4;
+    private static final double TURN_SPEED_ROBOT = 0.5;
+    private static final String RIGHT_MOTOR_ROBOT = "right_front_drive";
+    private static final String LEFT_MOTOR_ROBOT = "left_front_drive";
+    private static final String ARM_MOTOR_ROBOT = "left_arm";
+    private static final String WRIST_ROBOT = "wrist";
+    private static final String INTAKE_ROBOT = "intake";
+
+    private static final double FORWARD_SPEED_SIM = 1.0;
+    private static final double TURN_SPEED_SIM = 1.0;
+    private static final String RIGHT_MOTOR_SIM = "frontRight";
+    private static final String LEFT_MOTOR_SIM = "frontLeft";
+    private static final String ARM_MOTOR_SIM = "m5";
+    private static final String WRIST_SIM = "m8";
+    private static final String INTAKE_SIM = "m6";
 
     @Override
     public void runOpMode() {
-      
-    //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-    //intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);  
-    //leftDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
-    //rightDrive = hardwareMap.get(DcMotor.class, "frontRight");
-    backRight = hardwareMap.get(DcMotor.class, "right_front_drive");
-    backLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
-      
-    m8 = hardwareMap.get(Servo.class, "wrist");
-    m5 = hardwareMap.get(DcMotor.class, "left_arm");
-    m6releasesample = hardwareMap.get(CRServo.class, "intake");
-      
-      
-    //leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);  
-    //rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);  
+        setupDevices(false);
+        drive(false);
 
-    backRight.setDirection(DcMotorSimple.Direction.REVERSE);  
-    backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
-    telemetry.addData("Status", "Initialized");
-    telemetry.update();
-
-    // Wait for the game to start (driver presses PLAY)
-    waitForStart();
-    
-    // Turn Right
-    backLeft.setPower(-1.0);
-    backRight.setPower(1.0);
-    sleep(1400);
-
-    // Stop - not sure if we need the stop in between each step - but added it
-    backLeft.setPower(0);
-    backRight.setPower(0);
-    sleep(100);
-      
-    //Go Straight
-    backLeft.setPower(1.0);
-    backRight.setPower(1.0);
-    sleep(400);  
-
-    // Stop
-    backLeft.setPower(0);
-    backRight.setPower(0);
-    sleep(100);
-      
-    // Turn Left
-    backLeft.setPower(1.0);
-    backRight.setPower(-1.0);
-    sleep(1000);
-
-     // Stop
-    backLeft.setPower(0);
-    backRight.setPower(0);
-    sleep(100);
- 
-    //Go Straight
-    backLeft.setPower(1.0);
-    backRight.setPower(1.0);
-    sleep(1400);  
-
-    // Stop
-    backLeft.setPower(0);
-    backRight.setPower(0);
-    sleep(100);
-     
-    // Turn Right
-    backLeft.setPower(-1.0);
-    backRight.setPower(1.0);
-    sleep(1400);
-
-    // Stop
-    backLeft.setPower(0);
-    backRight.setPower(0);
-    sleep(100);
-    
-    // Put the arm down  
-    m8.setPosition(0.5);
-    sleep(4000);
-
-    // TODO - figure out how to intake the sample
-      
-    // TODO - add steps to go to the basket and release the sample.
-      
-    // Stop
-    backLeft.setPower(0);
-    backRight.setPower(0);  
-       
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             telemetry.update();
-
         }
+    }
+
+    public void setupDevices(boolean useSimulator) {
+        backRight = hardwareMap.get(DcMotor.class, useSimulator ? RIGHT_MOTOR_SIM : RIGHT_MOTOR_ROBOT);
+        backLeft = hardwareMap.get(DcMotor.class, useSimulator ? LEFT_MOTOR_SIM : LEFT_MOTOR_ROBOT);
+
+        m8 = hardwareMap.get(Servo.class, useSimulator ? WRIST_SIM : WRIST_ROBOT);
+        m5 = hardwareMap.get(DcMotor.class, useSimulator ? ARM_MOTOR_SIM : ARM_MOTOR_ROBOT);
+        m6releasesample = hardwareMap.get(CRServo.class, useSimulator ? INTAKE_SIM : INTAKE_ROBOT);
+
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void stopMoving() {
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(100);
+    }
+
+    public void turnRight(double speed) {
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
+        sleep(1400);
+    }
+
+    public void turnLeft(double speed) {
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
+        sleep(1000);
+    }
+
+    public void goStraight(double speed) {
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        sleep(400);
+    }
+
+    public void drive(boolean useSimulator) {
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        // Turn Right
+        double turnRightSpeed = useSimulator ? TURN_SPEED_SIM : TURN_SPEED_ROBOT;
+        turnRight(turnRightSpeed);
+
+        // Stop - not sure if we need the stop in between each step - but added it
+        stopMoving();
+
+        //Go Straight
+        goStraight(turnRightSpeed);
+        sleep(400);
+
+        // Stop
+        stopMoving();
+
+        // Turn Left
+        turnLeft(turnRightSpeed);
+
+        // Stop
+        stopMoving();
+
+        //Go Straight
+        goStraight(turnRightSpeed);
+        sleep(1400);
+
+        // Stop
+        stopMoving();
+
+        // Turn Right
+        turnRight(turnRightSpeed);
+
+        // Stop
+        stopMoving();
+
+        // Put the arm down
+        m8.setPosition(1.0);
+        sleep(4000);
+
+        // TODO - figure out how to intake the sample
+
+        // TODO - add steps to go to the basket and release the sample.
+        // Stop
+        stopMoving();
     }
 }
