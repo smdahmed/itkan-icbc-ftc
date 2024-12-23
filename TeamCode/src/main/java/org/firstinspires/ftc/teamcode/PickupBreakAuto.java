@@ -24,11 +24,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PickupBreakAuto extends LinearOpMode {
 
     // MAKE SURE THAT THIS FLAG IS OFF FOR ROBOT TESTING.
-    private  final boolean USE_SIMULATOR = true;
+    private final boolean USE_SIMULATOR = true;
 
     /* Declare OpMode members. */
-    private DcMotor         leftDrive   = null;
-    private DcMotor         rightDrive  = null;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
 
     private DcMotor backRight = null;
     private DcMotor backLeft = null;
@@ -43,21 +43,21 @@ public class PickupBreakAuto extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
 
-    private  final double FORWARD_SPEED_ROBOT = 0.4;
-    private  final double TURN_SPEED_ROBOT = 0.5;
-    private  final String RIGHT_MOTOR_ROBOT = "right_front_drive";
-    private  final String LEFT_MOTOR_ROBOT = "left_front_drive";
-    private  final String ARM_MOTOR_ROBOT = "left_arm";
-    private  final String WRIST_ROBOT = "wrist";
-    private  final String INTAKE_ROBOT = "intake";
+    private final double FORWARD_SPEED_ROBOT = 0.4;
+    private final double TURN_SPEED_ROBOT = 0.5;
+    private final String RIGHT_MOTOR_ROBOT = "right_front_drive";
+    private final String LEFT_MOTOR_ROBOT = "left_front_drive";
+    private final String ARM_MOTOR_ROBOT = "left_arm";
+    private final String WRIST_ROBOT = "wrist";
+    private final String INTAKE_ROBOT = "intake";
 
-    private  final double FORWARD_SPEED_SIM = 1.0;
-    private  final double TURN_SPEED_SIM = 1.0;
-    private  final String RIGHT_MOTOR_SIM = "backRight";
-    private  final String LEFT_MOTOR_SIM = "backLeft";
-    private  final String ARM_MOTOR_SIM = "m5";
-    private  final String WRIST_SIM = "m8";
-    private  final String INTAKE_SIM = "m6-release sample";
+    private final double FORWARD_SPEED_SIM = 1.0;
+    private final double TURN_SPEED_SIM = 1.0;
+    private final String RIGHT_MOTOR_SIM = "backRight";
+    private final String LEFT_MOTOR_SIM = "backLeft";
+    private final String ARM_MOTOR_SIM = "m5";
+    private final String WRIST_SIM = "m8";
+    private final String INTAKE_SIM = "m6-release sample";
 
     @Override
     public void runOpMode() {
@@ -67,17 +67,15 @@ public class PickupBreakAuto extends LinearOpMode {
         m5 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? ARM_MOTOR_SIM : ARM_MOTOR_ROBOT);
 
 
-        if(USE_SIMULATOR){
+        if (USE_SIMULATOR) {
             m8 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? WRIST_SIM : WRIST_ROBOT);
             m5 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? ARM_MOTOR_SIM : ARM_MOTOR_ROBOT);
             m6releasesample = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? INTAKE_SIM : INTAKE_ROBOT);
-            leftDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
+            leftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
             rightDrive = hardwareMap.get(DcMotor.class, "frontRight");
             leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        }
-
-        else {
+        } else {
             m8Robot = hardwareMap.get(Servo.class, USE_SIMULATOR ? WRIST_SIM : WRIST_ROBOT);
             m6releasesampleRobot = hardwareMap.get(CRServo.class, USE_SIMULATOR ? INTAKE_SIM : INTAKE_ROBOT);
         }
@@ -229,9 +227,41 @@ public class PickupBreakAuto extends LinearOpMode {
         }
         m8.setPower(0);
 
-        // run until the end of the match (driver presses STOP)
-        telemetry.addData("Status", "Ending");
-        telemetry.update();
-    }
+        // Turn Left
+        backLeft.setPower(-1.0);
+        backRight.setPower(1.0);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 3.37)) {
+            telemetry.addData("Path", "Leg 16: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        //Go Straight
+        backLeft.setPower(1.0);
+        backRight.setPower(2.0);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 4.0)) {
+            telemetry.addData("Path", "Leg 17: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
 
+        m8.setPower(-0.5);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+            telemetry.addData("Path", "Leg 18: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+
+        }
+
+        m5.setPower(-0.5);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+            telemetry.addData("Path", "Leg 19: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+            m6releasesample.setPower(-1);
+            // run until the end of the match (driver presses STOP)
+            telemetry.addData("Status", "Ending");
+            telemetry.update();
+        }
+
+    }
 }
