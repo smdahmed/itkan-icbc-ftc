@@ -65,8 +65,8 @@ public class TestAutonomous extends LinearOpMode {
 
     private static final double FORWARD_SPEED_ROBOT = 0.4;
     private static final double TURN_SPEED_ROBOT = 0.5;
-    private static final String RIGHT_MOTOR_ROBOT = "right_front_drive";
-    private static final String LEFT_MOTOR_ROBOT = "left_front_drive";
+    private static final String RIGHT_MOTOR_ROBOT = "front_right_motor";
+    private static final String LEFT_MOTOR_ROBOT = "front_left_motor";
     private static final String ARM_MOTOR_ROBOT = "left_arm";
     private static final String WRIST_ROBOT = "wrist";
     private static final String INTAKE_ROBOT = "intake";
@@ -83,45 +83,24 @@ public class TestAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-//        backRight = hardwareMap.get(DcMotor.class, "frontRight");
-//        backLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
-//
-//        m8 = hardwareMap.get(Servo.class, "wrist");
-//        m5 = hardwareMap.get(DcMotor.class, "left_arm");
-//        m6releasesample = hardwareMap.get(CRServo.class, "intake");
-//
-//        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         SensorInterface sensor = new SensorInterface();
+        sensor.configureOtos(telemetry, myOtos);
+        setupDevices(USE_SIMULATOR);
+        telemetry.addData("Status", "Running");
 
+        // Log the position to the telemetry
+        logSensorData();
 
-        setupDevices(false);
+        // Update the telemetry on the driver station
+        telemetry.update();
 
-            telemetry.addData("Status", "Running");
-            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            myOtos.calibrateImu();
-            myOtos.resetTracking();
-            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
-            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
-            telemetry.addLine();
+        drive(USE_SIMULATOR);
 
-            // Log the position to the telemetry
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
-
-            // Update the telemetry on the driver station
-            telemetry.update();
-            drive(false);
-
+        telemetry.addData("Sensor status:", myOtos.getConnectionInfo());
+        telemetry.addData("Sensor connection status:", myOtos.isConnected());
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        sensor.configureOtos(telemetry, myOtos);
-
-
-
-        // run until the end of the match (driver presses STOP)
 
     }
 
@@ -136,6 +115,10 @@ public class TestAutonomous extends LinearOpMode {
 
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        myOtos.calibrateImu();
+        myOtos.resetTracking();
+        telemetry.addLine();
     }
 
     public void stopMoving() {
@@ -172,10 +155,7 @@ public class TestAutonomous extends LinearOpMode {
         double turnRightSpeed = useSimulator ? TURN_SPEED_SIM : TURN_SPEED_ROBOT;
         turnRight(turnRightSpeed);
         // Log the position to the telemetry
-        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        telemetry.addData("X coordinate", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        logSensorData();
 
         // Update the telemetry on the driver station
         telemetry.update();
@@ -187,16 +167,12 @@ public class TestAutonomous extends LinearOpMode {
         goStraight(turnRightSpeed);
         sleep(400);
 
-
         // Stop
         stopMoving();
 
         // Turn Left
         turnLeft(turnRightSpeed);
-        pos = myOtos.getPosition();
-        telemetry.addData("X coordinate", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        logSensorData();
 
         // Update the telemetry on the driver station
         telemetry.update();
@@ -207,30 +183,24 @@ public class TestAutonomous extends LinearOpMode {
         //Go Straight
         goStraight(turnRightSpeed);
         sleep(1400);
-        pos = myOtos.getPosition();
-        telemetry.addData("X coordinate 1", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        logSensorData();
+
 
         // Update the telemetry on the driver station
         telemetry.update();
 
         // Stop
         stopMoving();
-        pos = myOtos.getPosition();
-        telemetry.addData("X coordinate 2", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        logSensorData();
+
 
         // Update the telemetry on the driver station
         telemetry.update();
 
         // Turn Right
         turnRight(turnRightSpeed);
-        pos = myOtos.getPosition();
-        telemetry.addData("X coordinate 3", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        logSensorData();
+
 
         // Update the telemetry on the driver station
         telemetry.update();
@@ -246,8 +216,15 @@ public class TestAutonomous extends LinearOpMode {
 
         // TODO - add steps to go to the basket and release the sample.
 
-
         // Stop
         stopMoving();
+    }
+
+
+    public void logSensorData() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        telemetry.addData("X coordinate", pos.x);
+        telemetry.addData("Y coordinate", pos.y);
+        telemetry.addData("Heading angle", pos.h);
     }
 }
