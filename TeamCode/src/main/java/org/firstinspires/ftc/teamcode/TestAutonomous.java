@@ -79,7 +79,6 @@ public class TestAutonomous extends LinearOpMode {
     private static final String WRIST_SIM = "m8";
     private static final String INTAKE_SIM = "m6";
     SparkFunOTOS myOtos;
-    SensorInterface sensorInterface;
 
     @Override
     public void runOpMode() {
