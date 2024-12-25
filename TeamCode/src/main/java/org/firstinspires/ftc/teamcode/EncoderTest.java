@@ -203,7 +203,7 @@ public class EncoderTest extends LinearOpMode {
         m8.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while (runtime.seconds() < distance) {
             telemetry.addData("Path", "Leg %s: Arm movement: Current position: %s Target Position:%s"
-                    , leg, runtime.seconds(), target;
+                    , leg, runtime.seconds(), target);
             telemetry.update();
         }
 
