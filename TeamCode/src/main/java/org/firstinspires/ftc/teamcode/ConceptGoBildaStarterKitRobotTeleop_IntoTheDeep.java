@@ -75,7 +75,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
     public CRServo  intake      = null; //the active intake servo
-    public Servo    wrist       = null; //the wrist servo
+    // public Servo    wrist       = null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
 
 
@@ -107,13 +107,13 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     as far from the starting position, decrease it. */
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-    final double ARM_COLLECT               = 240 * ARM_TICKS_PER_DEGREE; //Changed from 250 -> 230 to stop from hitting ground.
-    final double ARM_CLEAR_BARRIER         = 230 * ARM_TICKS_PER_DEGREE;
+    final double ARM_COLLECT               = 20 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
+    final double ARM_GET_SAMPLE            = 15 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SAMPLE_IN_LOW   = 160 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 120 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
-    final double VIPER_OUT                 = 1464 * ARM_TICKS_PER_DEGREE;
+    final double VIPER_OUT                 = -80 * ARM_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -121,18 +121,19 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double INTAKE_DEPOSIT    =  0.5;
 
     /* Variables to store the positions that the wrist should be set to when folding in, or folding out. */
-    final double WRIST_FOLDED_IN   = 0;
-    final double WRIST_FOLDED_OUT  = 0.8;
+    // final double WRIST_FOLDED_IN   = 0;
+    // final double WRIST_FOLDED_OUT  = 0.8;
 
     /* A number in degrees that the triggers can adjust the arm position by */
-    final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
+    //final double FUDGE_FACTOR = 10 * ARM_TICKS_PER_DEGREE;
 
     /* Variables that are used to set the arm to a specific position */
-    double armPosition = (int)ARM_COLLAPSED_INTO_ROBOT;
-    double armPositionFudgeFactor;
+    double armPosition = (int) ARM_COLLAPSED_INTO_ROBOT;
+
 
     // Variable used to set the Viper Kit to a specific Position
     double viperPosition = 0;
+    //double viperFudgeFactor;
 
     @Override
     public void runOpMode() {
@@ -172,10 +173,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         ((DcMotorEx) viperKit).setCurrentAlert(5, CurrentUnit.AMPS);
 
 
-        /* Before starting the armMotor. We'll make sure the TargetPosition is set to 0.
+        /* Before starting the armMotor. We'll make sure the TargetPosition is set to 40. Changed to 40 because arm kept trying to move unnecessarily
         Then we'll set the RunMode to RUN_TO_POSITION. And we'll ask it to stop and reset encoder.
         If you do not have the encoder plugged into this motor, it will not run in this code. */
-        armMotor.setTargetPosition(0);
+        armMotor.setTargetPosition(40);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -187,11 +188,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake");
-        wrist  = hardwareMap.get(Servo.class, "wrist");
+        // wrist  = hardwareMap.get(Servo.class, "wrist");
 
         /* Make sure that the intake is off, and the wrist is folded in. */
         intake.setPower(INTAKE_OFF);
-        wrist.setPosition(WRIST_FOLDED_IN);
+        // wrist.setPosition(WRIST_FOLDED_IN);
 
         /* Send telemetry message to signify robot waiting */
         telemetry.addLine("Robot Ready.");
@@ -278,9 +279,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             turns the intake on to the COLLECT mode.*/
 
             if(gamepad2.right_bumper){
-                /* This is the intaking/collecting arm position */
+                /* This is the setup for intaking from the submersible. Press left trigger to extend and pick up samples from submersible */
                 armPosition = ARM_COLLECT;
-                wrist.setPosition(WRIST_FOLDED_OUT);
+                // wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
             }
 
@@ -289,7 +290,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 Note here that we don't set the wrist position or the intake power when we
                 select this "mode", this means that the intake and wrist will continue what
                 they were doing before we clicked left bumper. */
-                armPosition = ARM_CLEAR_BARRIER;
+                // Changed the functionality to tilt down from right_bumper position so it's easier to pick up samples from submersible
+                armPosition = ARM_GET_SAMPLE;
             }
 
             else if (gamepad2.y){
@@ -302,27 +304,36 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 back to folded inside the robot. This is also the starting configuration */
                 armPosition = ARM_COLLAPSED_INTO_ROBOT;
                 intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
+                // wrist.setPosition(WRIST_FOLDED_IN);
+                viperPosition = 0;
             }
 
             else if (gamepad2.dpad_right){
                 /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
                 armPosition = ARM_SCORE_SPECIMEN;
-                wrist.setPosition(WRIST_FOLDED_IN);
+                // wrist.setPosition(WRIST_FOLDED_IN);
             }
 
             else if (gamepad2.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
                 armPosition = ARM_ATTACH_HANGING_HOOK;
                 intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
+                // wrist.setPosition(WRIST_FOLDED_IN);
             }
 
             else if (gamepad2.dpad_down){
                 /* this moves the arm down to lift the robot up once it has been hooked */
                 armPosition = ARM_WINCH_ROBOT;
                 intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
+                // wrist.setPosition(WRIST_FOLDED_IN);
+            }
+            else if (gamepad2.left_trigger > 0.0){
+                // Extends the viper kit out
+                viperPosition = VIPER_OUT;
+            }
+            else if (gamepad2.right_trigger > 0.0){
+                // Retracts the viper kit back in
+                viperPosition = 0;
             }
 
 
@@ -334,15 +345,15 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             than the other, it "wins out". This variable is then multiplied by our FUDGE_FACTOR.
             The FUDGE_FACTOR is the number of degrees that we can adjust the arm by with this function. */
 
-            //armPositionFudgeFactor = FUDGE_FACTOR * (gamepad1.right_trigger + (-gamepad1.left_trigger));
-
+            //viperFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger));
 
             /* Here we set the target position of our arm to match the variable that was selected
             by the driver.
             We also set the target velocity (speed) the motor runs at, and use setMode to run it.*/
-            armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor));
 
-            ((DcMotorEx) armMotor).setVelocity(2100);
+            armMotor.setTargetPosition((int) (armPosition));
+            // Reduced arm velocity so it wouldn't jitter when moving
+            ((DcMotorEx) armMotor).setVelocity(1600);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the target position to the position the driver asked for
