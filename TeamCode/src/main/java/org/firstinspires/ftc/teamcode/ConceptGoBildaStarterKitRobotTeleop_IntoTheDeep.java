@@ -112,7 +112,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
     In these variables you'll see a number in degrees, multiplied by the ticks per degree of the arm.
     This results in the number of encoder ticks the arm needs to move in order to achieve the ideal
-    set position of the arm. For example, the ARM_SCORE_SAMPLE_IN_LOW is set to
+    set position of the arm. For example, the ARM_SCORE_SAMPLE_IN_HIGH is set to
     160 * ARM_TICKS_PER_DEGREE. This asks the arm to move 160° from the starting position.
     If you'd like it to move further, increase that number. If you'd like it to not move
     as far from the starting position, decrease it. */
@@ -121,8 +121,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double ARM_COLLECT               = 20 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
     final double ARM_GET_SAMPLE            = 15 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_LOW   = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_ATTACH_HANGING_HOOK   = 120 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 100 * ARM_TICKS_PER_DEGREE;
+    final double ARM_ATTACH_HANGING_HOOK   = 140 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
     final double VIPER_OUT                 = -80 * ARM_TICKS_PER_DEGREE;
 
@@ -307,7 +307,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             else if (gamepad2.y){
                 /* This is the correct height to score the sample in the LOW BASKET */
-                armPosition = ARM_SCORE_SAMPLE_IN_LOW;
+                armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
             }
 
             else if (gamepad2.dpad_left) {
@@ -341,6 +341,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             else if (gamepad2.left_trigger > 0.0){
                 // Extends the viper kit out
                 viperPosition = VIPER_OUT;
+                if (armPosition == ARM_COLLAPSED_INTO_ROBOT){
+                    viperPosition = 0;
+                }
             }
             else if (gamepad2.right_trigger > 0.0){
                 // Retracts the viper kit back in
