@@ -69,7 +69,6 @@ public class PickupBreakAuto extends LinearOpMode {
 
         if (USE_SIMULATOR) {
             m8 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? WRIST_SIM : WRIST_ROBOT);
-            m5 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? ARM_MOTOR_SIM : ARM_MOTOR_ROBOT);
             m6releasesample = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? INTAKE_SIM : INTAKE_ROBOT);
             leftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
             rightDrive = hardwareMap.get(DcMotor.class, "frontRight");
