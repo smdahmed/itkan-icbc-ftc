@@ -10,6 +10,23 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# Ignore build files
+gradle/
+build/
+TeamCode/build
+.gradle/
+
+# Android Studio
+*.iml
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+
 # Package Files #
 *.jar
 *.war
@@ -18,7 +35,11 @@
 *.zip
 *.tar.gz
 *.rar
+*.properties
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+#xmls with cusotm paths
+*mergers.xml
