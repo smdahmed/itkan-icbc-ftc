@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,6 +23,8 @@ public class EncoderTest extends LinearOpMode {
 
     private Servo m8Robot;
     private CRServo m6releasesampleRobot;
+    public DcMotor  viperKit    = null; // the viper kit!!!
+
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -33,6 +33,7 @@ public class EncoderTest extends LinearOpMode {
     private final String ARM_MOTOR_ROBOT = "left_arm";
     private final String WRIST_ROBOT = "wrist";
     private final String INTAKE_ROBOT = "intake";
+    private final String VIPER_KIT = "viper_kit";
 
     private final String RIGHT_MOTOR_SIM = "backRight";
     private final String LEFT_MOTOR_SIM = "backLeft";
@@ -69,7 +70,7 @@ public class EncoderTest extends LinearOpMode {
         if (USE_SIMULATOR) {
             m8 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? WRIST_SIM : WRIST_ROBOT);
             m5 = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? ARM_MOTOR_SIM : ARM_MOTOR_ROBOT);
-            m6releasesample = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? INTAKE_SIM : INTAKE_ROBOT);
+            m6releasesample = hardwareMap.get(DcMotor.class,  INTAKE_SIM);
             leftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
             rightDrive = hardwareMap.get(DcMotor.class, "frontRight");
             leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -77,7 +78,10 @@ public class EncoderTest extends LinearOpMode {
             moveWrist(10,0);
         } else {
 //            m8Robot = hardwareMap.get(Servo.class, USE_SIMULATOR ? WRIST_SIM : WRIST_ROBOT);
-            m6releasesampleRobot = hardwareMap.get(CRServo.class, USE_SIMULATOR ? INTAKE_SIM : INTAKE_ROBOT);
+            m6releasesampleRobot = hardwareMap.get(CRServo.class, INTAKE_ROBOT);
+            viperKit = hardwareMap.get(DcMotor.class, VIPER_KIT);
+            viperKit.setTargetPosition(0);
+
         }
 
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
