@@ -61,9 +61,7 @@ public class PickupBreakAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-      m5.setPower(8);  // Full forward speed
-	  m5.setPower(-8);  // Half reverse speed
-
+    
 
         backRight = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? RIGHT_MOTOR_SIM : RIGHT_MOTOR_ROBOT);
         backLeft = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? LEFT_MOTOR_SIM : LEFT_MOTOR_ROBOT);
@@ -105,7 +103,8 @@ public class PickupBreakAuto extends LinearOpMode {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-        // Stop - not sure if we need the stop in between each step - but added it
+        // Stop - not sure if we need the stop in between each step - but added it 
+      // Stop is needed unless we modify 
         backLeft.setPower(0);
         backRight.setPower(0);
         runtime.reset();
@@ -187,11 +186,11 @@ public class PickupBreakAuto extends LinearOpMode {
 
         // Put the arm down  
         m8.setTargetPosition(1);
-        m8.setPower(1);
+        m8.setPower(5);
 
         // Put the wrist into position  
         m5.setTargetPosition(1);
-        m5.setPower(1);
+        m5.setPower(5);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 7)) {
             telemetry.addData("Path", "Leg 12: %4.1f S Elapsed", runtime.seconds());
@@ -233,7 +232,7 @@ public class PickupBreakAuto extends LinearOpMode {
         backLeft.setPower(-1.0);
         backRight.setPower(1.0);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.37)) {
+        while (opModeIsActive() && (runtime.seconds() < 3.42)) {
             telemetry.addData("Path", "Leg 16: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -254,7 +253,7 @@ public class PickupBreakAuto extends LinearOpMode {
 
         }
 
-        m5.setPower(-0.5);
+        m5.setPower(-8);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 19: %4.1f S Elapsed", runtime.seconds());
