@@ -21,7 +21,7 @@ public class EncoderTest extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
-    //Ticks is motor rate * the ratio provided by gobilda.
+    //Ticks is motor rate * the ratio provided by Gobilda.
     private final double ticks = 537.7;
     //Circumference is based on the wheel size.
     private final double circumference = 301.59;
@@ -101,10 +101,11 @@ public class EncoderTest extends LinearOpMode {
         //For some reason the simulator does not accepted casted values.
         if (!USE_SIMULATOR) {
             target = (int) ((distance * 10 / circumference) * ticks);
-        } else {
+        }
+//        else {
             //Comment this out if using robot.
 //            target = (distance * 10 / circumference) * (ticks) + backRight.getCurrentPosition();
-        }
+//        }
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
         backRight.setPower(1);
@@ -125,10 +126,11 @@ public class EncoderTest extends LinearOpMode {
         //For some reason the simulator does not accepted casted values.
         if (!USE_SIMULATOR) {
             target = (int) ((distance * 10 / circumference) * ticks);
-        } else {
+        }
+//        else {
             //Comment this out if using robot.
 //            target = (distance * 10 / circumference) * (ticks) + backRight.getCurrentPosition();
-        }
+//        }
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
         backRight.setPower(1);
@@ -152,10 +154,11 @@ public class EncoderTest extends LinearOpMode {
         //For some reason the simulator does not accepted casted values.
         if (!USE_SIMULATOR) {
             target = (int) ((distance * 10 / circumference) * ticks);
-        } else {
+        }
+//        else {
             //Comment this out if using robot.
 //            target = (distance * 10 / circumference) * (ticks) + backLeft.getCurrentPosition();
-        }
+//        }
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
         backRight.setPower(-1);
@@ -179,10 +182,11 @@ public class EncoderTest extends LinearOpMode {
         //For some reason the simulator does not accepted casted values.
         if (!USE_SIMULATOR) {
             target = (int) ((distance * 10 / circumference) * ticks);
-        } else {
+        }
+//        else {
             //Comment this out if using robot.
 //            target = (distance * 10 / circumference) * (ticks) + m8.getCurrentPosition();
-        }
+//        }
         m8.setTargetPosition(target);
         m8.setPower(0.5);
         m8.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -201,10 +205,11 @@ public class EncoderTest extends LinearOpMode {
         //For some reason the simulator does not accepted casted values.
         if (!USE_SIMULATOR) {
             target = (int) ((distance * 10 / circumference) * ticks);
-        } else {
+        }
+//        else {
             //Comment this out if using robot.
 //            target = (distance * 10 / circumference) * (ticks) + m8.getCurrentPosition();
-        }
+//        }
         m8.setTargetPosition(target);
         m8.setPower(0.5);
         m8.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -218,30 +223,6 @@ public class EncoderTest extends LinearOpMode {
         m8.setPower(0);
         m8.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-
-//    private void moveWrist(int distance) {
-//        //For some reason the simulator does not accepted casted values.
-//        if (!USE_SIMULATOR) {
-//            target = (int) ((distance * 10 / circumference) * ticks);
-//        } else {
-//            //Comment this out if using robot.
-////            target = (distance / circumference) * (ticks) + m8.getCurrentPosition();
-//        }
-//        arm.setTargetPosition(target);
-//        arm.setPower(0.5);
-//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        runtime.reset();
-//        while (runtime.seconds() < distance) {
-//            telemetry.addData("Path", "Leg %s: Wrist movement: Current position: %s Target Position:%s"
-//                    , arm.getCurrentPosition(), arm.getTargetPosition());
-//            telemetry.update();
-//        }
-//        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        arm.setPower(0);
-//
-//        // Reset encoders
-//        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//    }
 
     private void pickupSample() {
         if(USE_SIMULATOR){
@@ -263,7 +244,23 @@ public class EncoderTest extends LinearOpMode {
 
     private void dropSampleInHighBasket(){
         moveArmUp(20);
-        dropSample();
+        if(!USE_SIMULATOR){
+            viperKit.setTargetPosition(1);
+            viperKit.setPower(1);
+            while(viperKit.isBusy()){
+                telemetry.addData("Extending viper Arm", "Leg %s: Current position: %s Target Position:%s"
+                        , viperKit.getCurrentPosition(), viperKit.getTargetPosition());
+            }
+            dropSample();
+            viperKit.setTargetPosition(0);
+            viperKit.setPower(-1);
+            while(viperKit.isBusy()){
+                telemetry.addData("Extending viper Arm", "Leg %s: Current position: %s Target Position:%s"
+                        , viperKit.getCurrentPosition(), viperKit.getTargetPosition());
+            }
+        }
+        moveArmDown(20);
+
     }
 
     private boolean isNotInPosition(DcMotor motor){
