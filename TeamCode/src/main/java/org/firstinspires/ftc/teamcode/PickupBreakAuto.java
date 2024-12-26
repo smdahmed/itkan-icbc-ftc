@@ -61,6 +61,9 @@ public class PickupBreakAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+      m5.setPower(8);  // Full forward speed
+	  m5.setPower(-8);  // Half reverse speed
+
 
         backRight = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? RIGHT_MOTOR_SIM : RIGHT_MOTOR_ROBOT);
         backLeft = hardwareMap.get(DcMotor.class, USE_SIMULATOR ? LEFT_MOTOR_SIM : LEFT_MOTOR_ROBOT);
@@ -90,7 +93,7 @@ public class PickupBreakAuto extends LinearOpMode {
         //Go Straight
         backLeft.setPower(1.0);
         backRight.setPower(1.0);
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < .07)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
