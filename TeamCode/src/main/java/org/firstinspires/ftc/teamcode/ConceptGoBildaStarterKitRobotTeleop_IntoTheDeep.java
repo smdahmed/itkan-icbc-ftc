@@ -181,9 +181,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
         // Same for Viper Kit.
         // Setting TargetPosition to 0, setting runMode to RUN_TO_POSITION. Also asking it to stop and reset encoder
+        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperKit.setTargetPosition(0);
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperKit.setPower(0.5);
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake");
