@@ -42,6 +42,8 @@ public class FaaezahEncoder extends LinearOpMode {
         //Start with sample in basket
         turnRight((int) 34.5);
         goStraight(100);
+        turnLeft((int) 34.5);
+//        goBackwards(100);
 
 //        moveArmUp();
 //        dropSample();
@@ -72,7 +74,7 @@ public class FaaezahEncoder extends LinearOpMode {
         backRight.setVelocity(200);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setVelocity(200);
-        while (backRight.isBusy() && backLeft.isBusy()) {
+        while (isNotInPosition(backLeft) && isNotInPosition(backRight)) {
             telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     backRight.getCurrentPosition(), backRight.getTargetPosition());
             telemetry.update();
@@ -141,7 +143,7 @@ public class FaaezahEncoder extends LinearOpMode {
         backLeft.setVelocity(-500);
         telemetry.update();
         while (isNotInPosition(backRight) && isNotInPosition(backLeft)) {
-            telemetry.addData("Turning left", "Leg %s: Current position: %s Target Position:%s"
+            telemetry.addData("Turning left", "Leg: Current position: %s Target Position:%s"
                     , backLeft.getCurrentPosition(), backLeft.getTargetPosition());
             telemetry.update();
             backRight.setVelocity(0);

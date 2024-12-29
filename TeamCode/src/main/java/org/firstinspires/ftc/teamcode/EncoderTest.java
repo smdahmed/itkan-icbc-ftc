@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Encoder Test", group = "Robot")
 public class EncoderTest extends LinearOpMode {
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private DcMotorEx backRight;
+    private DcMotorEx backLeft;
 
-    private DcMotor arm;
+    private DcMotorEx arm;
 
     private CRServo robotSampleServo;
-    public DcMotor viperKit;
+    public DcMotorEx viperKit;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -40,11 +40,13 @@ public class EncoderTest extends LinearOpMode {
         waitForStart();
 
         //Start with sample in basket
-        goStraight(25);
-        moveArmUp();
-        dropSample();
-        moveArmDown(0);
-        goBackwards(30);
+        turnRight((int) 34.5);
+        goStraight(100);
+
+//        moveArmUp();
+//        dropSample();
+//        moveArmDown(0);
+//        goBackwards(30);
 
         //Commented out while we test.
 //        turnRight(600);
@@ -60,13 +62,16 @@ public class EncoderTest extends LinearOpMode {
 
     private void goStraight(int distance) {
         // Go straight
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         target = (int) ((distance * 10 / circumference) * ticks);
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setPower(1);
-        backLeft.setPower(1);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setVelocity(200);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setVelocity(200);
         while (backRight.isBusy() && backLeft.isBusy()) {
             telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     backRight.getCurrentPosition(), backRight.getTargetPosition());
@@ -80,14 +85,12 @@ public class EncoderTest extends LinearOpMode {
     }
 
     private void goBackwards(int distance) {
-        // Go straight
         target = (int) ((distance * 10 / circumference) * ticks);
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setPower(-1);
-        backLeft.setPower(-1);
+        backRight.setVelocity(200);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setVelocity(200);
         while (backRight.isBusy() && backLeft.isBusy()) {
             telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     backRight.getCurrentPosition(), backRight.getTargetPosition());
@@ -101,25 +104,28 @@ public class EncoderTest extends LinearOpMode {
     }
 
     private void turnRight(int distance) {
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //For some reason the simulator does not accepted casted values.
         target = (int) ((distance * 10 / circumference) * ticks);
-
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
-        backRight.setPower(1);
-        backLeft.setPower(-1);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setVelocity(-500);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setVelocity(500);
         telemetry.update();
         while (isNotInPosition(backRight) && isNotInPosition(backLeft)) {
             telemetry.addData("Path", "Turning right: Current position: %s Target Position:%s"
                     , backRight.getCurrentPosition(), backRight.getTargetPosition());
             telemetry.update();
         }
+        backRight.setVelocity(0);
+        backLeft.setVelocity(0);
+
         // Reset encoders
-        backRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -128,22 +134,23 @@ public class EncoderTest extends LinearOpMode {
     private void turnLeft(int distance) {
         //For some reason the simulator does not accepted casted values.
         target = (int) ((distance * 10 / circumference) * ticks);
+        backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        backRight.setTargetPosition(target);
-        backLeft.setTargetPosition(target);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setPower(1);
-        backLeft.setPower(-1);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRight.setVelocity(500);
+        backLeft.setVelocity(-500);
         telemetry.update();
         while (isNotInPosition(backRight) && isNotInPosition(backLeft)) {
             telemetry.addData("Turning left", "Leg %s: Current position: %s Target Position:%s"
                     , backLeft.getCurrentPosition(), backLeft.getTargetPosition());
             telemetry.update();
+            backRight.setVelocity(0);
+            backLeft.setVelocity(0);
         }
+
         // Reset encoders
-        backRight.setPower(0);
-        backLeft.setPower(0);
+        backRight.setVelocity(0);
+        backLeft.setVelocity(0);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -156,7 +163,7 @@ public class EncoderTest extends LinearOpMode {
         arm.setTargetPosition(target);
         arm.setPower(0.5);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (runtime.seconds() < distance) {
+        while (isNotInPosition(arm)) {
             telemetry.addData("Path", "Leg %s: Arm movement: Current position: %s Target Position:%s"
                     , runtime.seconds(), target);
             telemetry.update();
@@ -215,11 +222,11 @@ public class EncoderTest extends LinearOpMode {
     }
 
     private void initializeDevices() {
-        backRight = hardwareMap.get(DcMotor.class, "right_front_drive");
-        backLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
-        arm = hardwareMap.get(DcMotor.class, "left_arm");
+        backRight = hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        backLeft = hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        arm = hardwareMap.get(DcMotorEx.class, "left_arm");
         robotSampleServo = hardwareMap.get(CRServo.class, "intake");
-        viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
+        viperKit = hardwareMap.get(DcMotorEx.class, "viper_kit");
         viperKit.setTargetPosition(0);
         viperKit.setPower(0.5);
 
