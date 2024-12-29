@@ -39,11 +39,13 @@ public class EncoderTest extends LinearOpMode {
         setupEncoders();
         waitForStart();
 
-        goStraight(25);
-
+        goStraight(10);
         moveArmUp(0);
-//        turnRight(50);
-
+        moveArmDown(20);
+        dropSample();
+        goBackwards(10);
+        turnRight(40);
+        goStraight(30);
 
         //Commented out while we test.
 //        turnRight(600);
@@ -53,7 +55,6 @@ public class EncoderTest extends LinearOpMode {
 //        turnRight(1650);
 //        goStraight(1750);
 //        turnLeft(450);
-
         telemetry.addData("Status", "Ended");
     }
 
@@ -76,6 +77,8 @@ public class EncoderTest extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     private void goStraight(int distance) {
@@ -95,8 +98,25 @@ public class EncoderTest extends LinearOpMode {
         // Reset encoders
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    private void goBackwards(int distance) {
+        // Go straight
+        target = (int) ((distance * 10 / circumference) * ticks);
+        backRight.setTargetPosition(target);
+        backLeft.setTargetPosition(target);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setPower(-1);
+        backLeft.setPower(-1);
+        while (backRight.isBusy() && backLeft.isBusy()) {
+            telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
+                    backRight.getCurrentPosition(), backRight.getTargetPosition());
+            telemetry.update();
+        }
+        // Reset encoders
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void turnRight(int distance) {
