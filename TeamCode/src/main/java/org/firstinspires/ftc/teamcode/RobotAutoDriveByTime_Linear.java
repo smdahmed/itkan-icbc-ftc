@@ -61,6 +61,9 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     /* Declare OpMode members. */
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
+    public DcMotor  viperKit    = null; // the viper kit!!!
+    double viperPosition = 0;
+
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -74,12 +77,18 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         // Initialize the drive system variables.
         leftDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        viperKit.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperKit.setTargetPosition(0);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperKit.setPower(0.5);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
