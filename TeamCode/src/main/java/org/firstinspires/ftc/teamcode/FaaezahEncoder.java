@@ -43,7 +43,7 @@ public class FaaezahEncoder extends LinearOpMode {
         turnRight((int) 34.5);
         goStraight(100);
         turnLeft((int) 34.5);
-//        goBackwards(100);
+        goBackwards(100);
 
 //        moveArmUp();
 //        dropSample();
@@ -71,9 +71,9 @@ public class FaaezahEncoder extends LinearOpMode {
         backRight.setTargetPosition(target);
         backLeft.setTargetPosition(target);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setVelocity(200);
+        backRight.setVelocity(400);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setVelocity(200);
+        backLeft.setVelocity(400);
         while (isNotInPosition(backLeft) && isNotInPosition(backRight)) {
             telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     backRight.getCurrentPosition(), backRight.getTargetPosition());
@@ -87,17 +87,23 @@ public class FaaezahEncoder extends LinearOpMode {
     }
 
     private void goBackwards(int distance) {
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         target = (int) ((distance * 10 / circumference) * ticks);
-        backRight.setTargetPosition(target);
-        backLeft.setTargetPosition(target);
-        backRight.setVelocity(200);
+        backRight.setTargetPosition(-target);
+        backLeft.setTargetPosition(-target);
+        backRight.setVelocity(-400);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setVelocity(200);
+        backLeft.setVelocity(-400);
         while (backRight.isBusy() && backLeft.isBusy()) {
             telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     backRight.getCurrentPosition(), backRight.getTargetPosition());
             telemetry.update();
         }
+        backRight.setVelocity(0);
+        backRight.setVelocity(0);
+
         // Reset encoders
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -111,7 +117,7 @@ public class FaaezahEncoder extends LinearOpMode {
 
         //For some reason the simulator does not accepted casted values.
         target = (int) ((distance * 10 / circumference) * ticks);
-        backRight.setTargetPosition(target);
+        backRight.setTargetPosition(-target);
         backLeft.setTargetPosition(target);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setVelocity(-500);
@@ -135,7 +141,12 @@ public class FaaezahEncoder extends LinearOpMode {
 
     private void turnLeft(int distance) {
         //For some reason the simulator does not accepted casted values.
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         target = (int) ((distance * 10 / circumference) * ticks);
+        backRight.setTargetPosition(target);
+        backLeft.setTargetPosition(-target);
         backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
