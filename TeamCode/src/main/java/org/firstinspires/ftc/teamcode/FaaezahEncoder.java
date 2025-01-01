@@ -39,25 +39,10 @@ public class FaaezahEncoder extends LinearOpMode {
         setupEncoders();
         waitForStart();
 
-        //Start with sample in basket
         turnRight((int) 34.5);
         goStraight(100);
         turnLeft((int) 34.5);
         goBackwards(100);
-
-//        moveArmUp();
-//        dropSample();
-//        moveArmDown(0);
-//        goBackwards(30);
-
-        //Commented out while we test.
-//        turnRight(600);
-//        moveArmDown(12, 3);
-//        pickupSample();
-//        goStraight(250);
-//        turnRight(1650);
-//        goStraight(1750);
-//        turnLeft(450);
 
         telemetry.addData("Status", "Ended");
     }
