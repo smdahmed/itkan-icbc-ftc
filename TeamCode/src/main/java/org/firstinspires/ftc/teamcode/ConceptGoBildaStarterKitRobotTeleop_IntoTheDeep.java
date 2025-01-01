@@ -308,12 +308,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperPosition = 0;
             }
 
-            else if (gamepad2.dpad_right){
-                /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
-                armPosition = ARM_SCORE_SPECIMEN;
-                // wrist.setPosition(WRIST_FOLDED_IN);
-            }
-
             else if (gamepad2.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
                 armPosition = ARM_ATTACH_HANGING_HOOK;
@@ -332,11 +326,17 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperPosition = VIPER_OUT;
                 if (armPosition == ARM_COLLAPSED_INTO_ROBOT){
                     viperPosition = 0;
+                    viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
             }
             else if (gamepad2.right_trigger > 0.0){
                 // Retracts the viper kit back in
                 viperPosition = 0;
+            }
+            else if (gamepad2.dpad_right){
+                viperPosition = 0;
+                viperKit.setPower(0.5);
+                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
 
@@ -362,7 +362,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             // Set the target position to the position the driver asked for
             viperKit.setTargetPosition((int) (viperPosition));
             // Set the velocity of the motor and use setMode to run
-            ((DcMotorEx) viperKit).setVelocity(2100);
+            ((DcMotorEx) viperKit).setVelocity(1600);
             viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             /* TECH TIP: Encoders, integers, and doubles
