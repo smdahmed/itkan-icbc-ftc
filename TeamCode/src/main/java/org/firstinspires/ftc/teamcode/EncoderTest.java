@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "PickupSample", group = "Robot")
+@Autonomous(name = "HangSample", group = "Robot")
 public class EncoderTest extends LinearOpMode {
     public DcMotor backRight;
     public DcMotor backLeft;
