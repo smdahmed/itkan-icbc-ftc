@@ -47,10 +47,11 @@ public class HangSampleAndPark extends LinearOpMode {
         viperKit.setPower(0);
 
         //Park after hanging sample.
-        encoderInterface.turnRightVelocity((int) 34.5);
-        encoderInterface.goStraightVelocity(100);
-        encoderInterface.turnLeftVelocity((int) 34.5);
-        encoderInterface.goBackwardsVelocity(100);
+        encoderInterface.goStraightVelocity(20);
+        encoderInterface.turnRightVelocity((int) 37);
+        encoderInterface.goStraightVelocity(95);
+        encoderInterface.turnLeft((int) 45);
+        encoderInterface.goBackwards(38);
 
         telemetry.addData("Status", "Ended");
     }

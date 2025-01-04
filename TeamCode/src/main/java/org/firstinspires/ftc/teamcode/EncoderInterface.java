@@ -68,15 +68,14 @@ public class EncoderInterface {
 
     void turnRight(int distance) {
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
-
-        hangSampleAndPark.backRight.setTargetPosition(target);
+        hangSampleAndPark.backRight.setTargetPosition(-target);
         hangSampleAndPark.backLeft.setTargetPosition(target);
         hangSampleAndPark.backRight.setPower(1);
         hangSampleAndPark.backLeft.setPower(-1);
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.telemetry.update();
-        while (isNotInPosition(hangSampleAndPark.backRight) && isNotInPosition(hangSampleAndPark.backLeft)) {
+        while (-hangSampleAndPark.backRight.getCurrentPosition() < -hangSampleAndPark.backRight.getTargetPosition() && isNotInPosition(hangSampleAndPark.backLeft)) {
             hangSampleAndPark.telemetry.addData("Path", "Turning right: Current position: %s Target Position:%s"
                     , hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
@@ -95,14 +94,14 @@ public class EncoderInterface {
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
 
         hangSampleAndPark.backRight.setTargetPosition(target);
-        hangSampleAndPark.backLeft.setTargetPosition(target);
+        hangSampleAndPark.backLeft.setTargetPosition(-target);
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backRight.setPower(1);
         hangSampleAndPark.backLeft.setPower(-1);
         hangSampleAndPark.telemetry.update();
-        while (isNotInPosition(hangSampleAndPark.backRight) && isNotInPosition(hangSampleAndPark.backLeft)) {
-            hangSampleAndPark.telemetry.addData("Turning left", "Leg %s: Current position: %s Target Position:%s"
+        while (isNotInPosition(hangSampleAndPark.backRight) && isNotNegativeInPosition(hangSampleAndPark.backLeft)) {
+            hangSampleAndPark.telemetry.addData("Turning left", "Leg: Current position: %s Target Position:%s"
                     , hangSampleAndPark.backLeft.getCurrentPosition(), hangSampleAndPark.backLeft.getTargetPosition());
             hangSampleAndPark.telemetry.update();
         }
@@ -151,6 +150,10 @@ public class EncoderInterface {
         return motor.getCurrentPosition() < motor.getTargetPosition();
     }
 
+    boolean isNotNegativeInPosition(DcMotor motor) {
+        return -motor.getCurrentPosition() < -motor.getTargetPosition();
+    }
+
     void initializeDevices() {
         hangSampleAndPark.backRight = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         hangSampleAndPark.backLeft = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_front_drive");
@@ -191,9 +194,9 @@ public class EncoderInterface {
         hangSampleAndPark.backRight.setTargetPosition(target);
         hangSampleAndPark.backLeft.setTargetPosition(target);
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hangSampleAndPark.backRight.setVelocity(400);
+        hangSampleAndPark.backRight.setVelocity(1000);
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hangSampleAndPark.backLeft.setVelocity(400);
+        hangSampleAndPark.backLeft.setVelocity(1000);
         while (isNotInPosition(hangSampleAndPark.backLeft) && isNotInPosition(hangSampleAndPark.backRight)) {
             hangSampleAndPark.telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
@@ -246,7 +249,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hangSampleAndPark.backLeft.setVelocity(500);
         hangSampleAndPark.telemetry.update();
-        while (isNotInPosition(hangSampleAndPark.backRight) && isNotInPosition(hangSampleAndPark.backLeft)) {
+        while (-hangSampleAndPark.backRight.getCurrentPosition() < -hangSampleAndPark.backRight.getTargetPosition() && isNotInPosition(hangSampleAndPark.backLeft)) {
             hangSampleAndPark.telemetry.addData("Path", "Turning right: Current position: %s Target Position:%s"
                     , hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
