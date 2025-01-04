@@ -17,8 +17,6 @@ public class EncoderTest extends LinearOpMode {
     public CRServo robotSampleServo;
     public DcMotor viperKit;
 
-    private final ElapsedTime runtime = new ElapsedTime();
-
     //Ticks is motor rate * the ratio provided by Gobilda.
     public final double ticks = 537.7;
     //Circumference is based on the wheel size.
@@ -33,7 +31,6 @@ public class EncoderTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        EncoderInterface encoderInterface = new EncoderInterface(this);
         initializeDevices();
         setupEncoders();
         waitForStart();

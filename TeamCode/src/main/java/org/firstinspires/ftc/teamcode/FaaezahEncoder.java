@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 @Autonomous(name = "Faaezah Encoder", group = "Robot")
 public class FaaezahEncoder extends LinearOpMode {
     private DcMotorEx backRight;
@@ -175,7 +177,7 @@ public class FaaezahEncoder extends LinearOpMode {
     private void moveArmUp() {
         arm.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_HIGH);
         arm.setPower(0.5);
-        ((DcMotorEx) arm).setVelocity(1600);
+        arm.setVelocity(1600);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while (arm.isBusy()) {
             telemetry.addData("Path", "Leg %s: Arm movement: Current position: %s Target Position:%s"
@@ -187,32 +189,9 @@ public class FaaezahEncoder extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    private void pickupSample() {
-        robotSampleServo.setPower(1);
-
-    }
 
     private void dropSample() {
         robotSampleServo.setPower(-1);
-    }
-
-    private void dropSampleInHighBasket() {
-        moveArmUp();
-        viperKit.setTargetPosition(1);
-        viperKit.setPower(1);
-        while (viperKit.isBusy()) {
-            telemetry.addData("Extending viper Arm", "Leg %s: Current position: %s Target Position:%s"
-                    , viperKit.getCurrentPosition(), viperKit.getTargetPosition());
-            dropSample();
-            viperKit.setTargetPosition(0);
-            viperKit.setPower(-1);
-            while (viperKit.isBusy()) {
-                telemetry.addData("Extending viper Arm", "Leg %s: Current position: %s Target Position:%s"
-                        , viperKit.getCurrentPosition(), viperKit.getTargetPosition());
-            }
-        }
-        moveArmDown(20);
-
     }
 
     private boolean isNotInPosition(DcMotor motor) {
