@@ -48,10 +48,10 @@ public class HangSampleAndPark extends LinearOpMode {
 
         //Park after hanging sample.
         encoderInterface.goStraightVelocity(20);
-        encoderInterface.turnRightVelocity((int) 37);
+        encoderInterface.turnRightVelocity((int) 50); //Value needs to be adjusted after testing
         encoderInterface.goStraightVelocity(95);
         encoderInterface.turnLeft((int) 45);
-        encoderInterface.goBackwards(38);
+        encoderInterface.goBackwards(38); //Value needs to be adjusted or line needs to be modified after testing
 
         telemetry.addData("Status", "Ended");
     }
