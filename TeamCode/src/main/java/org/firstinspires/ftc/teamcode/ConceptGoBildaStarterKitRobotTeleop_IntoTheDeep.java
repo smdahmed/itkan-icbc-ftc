@@ -341,6 +341,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperKit.setPower(0.5);
                 viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
+            //Endgame Auto Hang Beta (By pressing PS Central Button):
+            //else if (gamepad1.guide){
+            //    armPosition = ARM_ATTACH_HANGING_HOOK;
+            //    intake.setPower(INTAKE_OFF);
+            //    forward = 0.5;
+            //    armPosition = ARM_WINCH_ROBOT;
+            //   intake.setPower(INTAKE_OFF);      
+            //}
 
 
             /* Here we create a "fudge factor" for the arm position.
