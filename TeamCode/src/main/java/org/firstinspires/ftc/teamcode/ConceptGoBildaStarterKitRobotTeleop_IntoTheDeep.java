@@ -405,6 +405,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             /* send telemetry to the driver of the arm's current position and target position */
             telemetry.addData("armTarget: ", armMotor.getTargetPosition());
             telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
+            telemetry.addData("viperKitTarget: ", armMotor.getTargetPosition());
+            telemetry.addData("viperKitCurrPosition: ", armMotor.getCurrentPosition());
             telemetry.update();
 
         }
