@@ -349,14 +349,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 //Lift Arm to hang position:
                 armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
                 // Reduced arm velocity so it wouldn't jitter when moving
-                ((DcMotorEx) armMotor).setVelocity(1600);
+                ((DcMotorEx) armMotor).setVelocity(2100);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intake.setPower(INTAKE_OFF);
                 //Wait and bring arm down while accelerating
-                sleep(1000);
+                sleep(500);
                 armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
                 // Reduced arm velocity so it wouldn't jitter when moving
-                ((DcMotorEx) armMotor).setVelocity(1600);
+                ((DcMotorEx) armMotor).setVelocity(2100);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftDrive.setPower(1.0);
                 rightDrive.setPower(1.0);
