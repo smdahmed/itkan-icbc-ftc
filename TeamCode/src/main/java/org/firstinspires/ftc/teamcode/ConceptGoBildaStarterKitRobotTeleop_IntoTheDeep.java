@@ -118,7 +118,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double VIPER_OUT                 = (-4 * 360 - 3) * VIPER_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
-    final double INTAKE_COLLECT    = -1.0;
+    final double INTAKE_COLLECT    = -5.0;
     final double INTAKE_OFF        =  0.0;
     final double INTAKE_DEPOSIT    =  0.5;
 
@@ -200,10 +200,13 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         /* Send telemetry message to signify robot waiting */
         telemetry.addLine("Robot Ready.");
         telemetry.update();
-
         /* Wait for the game driver to press play */
         waitForStart();
-
+        viperKit.setTargetPosition(6);
+        // Set the velocity of the motor and use setMode to run
+//        ((DcMotorEx) viperKit).setVelocity(1600);
+        viperKit.setPower(0.5);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
 
@@ -342,13 +345,13 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             //Endgame Auto Hang Beta (By pressing PS Central Button):
-            //else if (gamepad1.guide){
-            //    armPosition = ARM_ATTACH_HANGING_HOOK;
-            //    intake.setPower(INTAKE_OFF);
-            //    forward = 0.5;
-            //    armPosition = ARM_WINCH_ROBOT;
-            //   intake.setPower(INTAKE_OFF);      
-            //}
+            else if (gamepad1.guide){
+                autoHang();
+
+                intake.setPower(INTAKE_OFF);
+
+
+            }
 
 
             /* Here we create a "fudge factor" for the arm position.
@@ -410,5 +413,24 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             telemetry.update();
 
         }
+    }
+    public void autoHang(){
+        armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(1600);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.setPower(INTAKE_OFF);
+
+        sleep(2000);
+        armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(1600);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftDrive.setPower(1.0);
+        rightDrive.setPower(1.0);
+        sleep(1000);
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+
     }
 }
