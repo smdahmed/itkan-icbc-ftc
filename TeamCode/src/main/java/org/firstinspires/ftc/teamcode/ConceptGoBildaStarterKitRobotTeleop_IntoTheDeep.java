@@ -362,8 +362,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 rightDrive.setPower(1.0);
                 sleep(1000);
                 leftDrive.setPower(0);
-                rightDrive.setPower(0);autoHang();
-
+                rightDrive.setPower(0);
                 intake.setPower(INTAKE_OFF);
 
 
