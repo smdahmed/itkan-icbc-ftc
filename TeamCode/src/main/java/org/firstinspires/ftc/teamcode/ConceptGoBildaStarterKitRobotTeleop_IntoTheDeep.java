@@ -346,26 +346,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             }
             //Endgame Auto Hang (By pressing PS Central Button):
             else if (gamepad1.guide){
-                //Lift Arm to hang position:
-                armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
-                // Reduced arm velocity so it wouldn't jitter when moving
-                ((DcMotorEx) armMotor).setVelocity(2100);
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                autoHang();
                 intake.setPower(INTAKE_OFF);
-                //Wait and bring arm down while accelerating
-                sleep(500);
-                armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
-                // Reduced arm velocity so it wouldn't jitter when moving
-                ((DcMotorEx) armMotor).setVelocity(2100);
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftDrive.setPower(1.0);
-                rightDrive.setPower(1.0);
-                sleep(1000);
-                leftDrive.setPower(0);
-                rightDrive.setPower(0);
-                intake.setPower(INTAKE_OFF);
-
-
             }
 
 
@@ -428,5 +410,22 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             telemetry.update();
 
         }
+    }
+        public void autoHang(){
+        armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(2100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.setPower(INTAKE_OFF);
+        sleep(2000);
+        armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(2100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftDrive.setPower(1.0);
+        rightDrive.setPower(1.0);
+        sleep(1000);
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
     }
 }
