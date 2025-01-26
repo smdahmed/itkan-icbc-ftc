@@ -92,7 +92,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                     * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
                     * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                     * 1/360.0; // we want ticks per degree, not per rotation
-
+    final double VIPER_TICKS_PER_DEGREE =
+            28
+                    * 13.7
+                    * 1/360.0;
 
     /* These constants hold the position that the arm is commanded to run to.
     These are relative to where the arm was located when you start the OpMode. So make sure the
@@ -107,12 +110,12 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
     final double ARM_COLLECT               = 20 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
-    final double ARM_GET_SAMPLE            = 15 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
+    final double ARM_GET_SAMPLE            = 30 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SAMPLE_IN_HIGH  = 100 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 140 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
-    final double VIPER_OUT                 = -80 * ARM_TICKS_PER_DEGREE;
+    final double VIPER_OUT                 = (-4 * 360 - 3) * VIPER_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -181,9 +184,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
         // Same for Viper Kit.
         // Setting TargetPosition to 0, setting runMode to RUN_TO_POSITION. Also asking it to stop and reset encoder
+        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperKit.setTargetPosition(0);
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperKit.setPower(0.5);
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -196,10 +200,13 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         /* Send telemetry message to signify robot waiting */
         telemetry.addLine("Robot Ready.");
         telemetry.update();
-
         /* Wait for the game driver to press play */
         waitForStart();
-
+        viperKit.setTargetPosition(6);
+        // Set the velocity of the motor and use setMode to run
+//        ((DcMotorEx) viperKit).setVelocity(1600);
+        viperKit.setPower(0.5);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
 
@@ -307,12 +314,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperPosition = 0;
             }
 
-            else if (gamepad2.dpad_right){
-                /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
-                armPosition = ARM_SCORE_SPECIMEN;
-                // wrist.setPosition(WRIST_FOLDED_IN);
-            }
-
             else if (gamepad2.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
                 armPosition = ARM_ATTACH_HANGING_HOOK;
@@ -331,11 +332,26 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperPosition = VIPER_OUT;
                 if (armPosition == ARM_COLLAPSED_INTO_ROBOT){
                     viperPosition = 0;
+                    viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
             }
             else if (gamepad2.right_trigger > 0.0){
                 // Retracts the viper kit back in
                 viperPosition = 0;
+            }
+            else if (gamepad2.dpad_right){
+                viperPosition = 0;
+                viperKit.setPower(0.5);
+                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+            //Endgame Auto Hang (By pressing PS Central Button):
+            else if (gamepad1.guide){
+                autoHang();
+                intake.setPower(INTAKE_OFF);
+            }
+
+            else if (gamepad2.guide){
+                autoSub();
             }
 
 
@@ -361,7 +377,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             // Set the target position to the position the driver asked for
             viperKit.setTargetPosition((int) (viperPosition));
             // Set the velocity of the motor and use setMode to run
-            ((DcMotorEx) viperKit).setVelocity(2100);
+            ((DcMotorEx) viperKit).setVelocity(1600);
             viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             /* TECH TIP: Encoders, integers, and doubles
@@ -393,8 +409,68 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             /* send telemetry to the driver of the arm's current position and target position */
             telemetry.addData("armTarget: ", armMotor.getTargetPosition());
             telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
+            telemetry.addData("viperKitTarget: ", viperKit.getTargetPosition());
+            telemetry.addData("viperKitCurrPosition: ", viperKit.getCurrentPosition());
             telemetry.update();
 
         }
+    }
+        public void autoHang(){
+        armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(2100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.setPower(INTAKE_OFF);
+        sleep(1500);
+        armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(2100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftDrive.setPower(1.0);
+        rightDrive.setPower(1.0);
+        sleep(1000);
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+
+    public void autoSub(){
+        // Lift arm
+        armMotor.setTargetPosition((int) (ARM_GET_SAMPLE)); // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(1600);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.setPower(INTAKE_OFF);
+        sleep(1500);
+
+        // intake on
+        intake.setPower(INTAKE_COLLECT);
+        //Extend Viper Kit in submersible
+        armPosition = ARM_COLLECT;
+        viperPosition = VIPER_OUT;
+        viperKit.setTargetPosition((int) VIPER_OUT);
+        ((DcMotorEx) viperKit).setVelocity(1600);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (armPosition == ARM_COLLAPSED_INTO_ROBOT){
+            viperPosition = 0;
+            viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        // Bring arm down to intake better
+        armPosition = ARM_COLLECT;
+        intake.setPower(INTAKE_COLLECT);
+        sleep(500);
+
+        //Pan to the right while in submersible for better consistency
+        leftDrive.setPower(0.5);
+        rightDrive.setPower(-0.5);
+        sleep(150); // Adjust (Degree of rotation)
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+        sleep(150);
+
+        //Take the sample back in
+        intake.setPower(INTAKE_COLLECT);
+        viperPosition = 0;
+        intake.setPower(INTAKE_OFF);
+
     }
 }
