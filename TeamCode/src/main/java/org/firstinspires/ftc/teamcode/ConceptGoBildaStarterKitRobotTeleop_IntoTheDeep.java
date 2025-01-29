@@ -412,20 +412,20 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         }
     }
         public void autoHang(){
-        armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
-        // Reduced arm velocity so it wouldn't jitter when moving
-        ((DcMotorEx) armMotor).setVelocity(2100);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(INTAKE_OFF);
-        sleep(1500);
-        armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
-        // Reduced arm velocity so it wouldn't jitter when moving
-        ((DcMotorEx) armMotor).setVelocity(2100);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftDrive.setPower(1.0);
-        rightDrive.setPower(1.0);
-        sleep(1000);
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+            armMotor.setTargetPosition((int) (ARM_ATTACH_HANGING_HOOK));
+            // Reduced arm velocity so it wouldn't jitter when moving
+            ((DcMotorEx) armMotor).setVelocity(2100);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intake.setPower(INTAKE_OFF);
+            sleep(1500);
+            armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
+            // Reduced arm velocity so it wouldn't jitter when moving
+            ((DcMotorEx) armMotor).setVelocity(2100);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftDrive.setPower(1.0);
+            rightDrive.setPower(1.0);
+            sleep(1000);
+            leftDrive.setPower(0);
+            rightDrive.setPower(0);
     }
 }
