@@ -354,6 +354,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 autoSub();
             }
 
+            else if (gamepad2.leftStickButton){
+                inSub();
+            }
+
+            else if (gamepad2.leftStickButton){
+                outSub();
+            }
+
 
             /* Here we create a "fudge factor" for the arm position.
             This allows you to adjust (or "fudge") the arm position slightly with the gamepad triggers.
@@ -433,7 +441,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         rightDrive.setPower(0);
     }
 
-    public void autoSub(){
+    public void inSub(){
         // Lift arm
         armMotor.setTargetPosition((int) (ARM_GET_SAMPLE)); // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(1600);
@@ -454,15 +462,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         intake.setPower(INTAKE_COLLECT);
         sleep(500);
         armMotor.setTargetPosition((int) (25 * ARM_TICKS_PER_DEGREE));
+    }
 
-        //Pan to the right while in submersible for better consistency
-        leftDrive.setPower(0.5);
-        rightDrive.setPower(-0.5);
-        sleep(150); // Adjust (Degree of rotation)
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        sleep(150);
-        sleep(500); // Additional sleep for intaking from submersible
+    public void outSub(){
         //Take the sample back in
         viperPosition = 0;
         //
