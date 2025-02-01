@@ -349,6 +349,13 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 autoHang();
                 intake.setPower(INTAKE_OFF);
             }
+            else if (gamepad2.left_stick_button) {
+                insub();
+
+            }
+            else if (gamepad2.right_stick_button) {
+                outsub();
+            }
 
 
             /* Here we create a "fudge factor" for the arm position.
@@ -428,4 +435,23 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             leftDrive.setPower(0);
             rightDrive.setPower(0);
     }
+
+    public void insub(){
+        // Lift arm
+        armMotor.setTargetPosition((int) (25*ARM_TICKS_PER_DEGREE));
+        sleep(500);
+        viperPosition = VIPER_OUT;
+        intake.setPower(INTAKE_COLLECT);
+
+    }
+    public void outsub(){
+        armPosition = ARM_GET_SAMPLE + 40;
+        sleep(300);
+        viperPosition = 0;
+
+
+
+
+    }
+    
 }

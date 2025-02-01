@@ -198,7 +198,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hangSampleAndPark.backLeft.setVelocity(1000);
         while (isNotInPosition(hangSampleAndPark.backLeft) && isNotInPosition(hangSampleAndPark.backRight)) {
-            hangSampleAndPark.telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
+            hangSampleAndPark.telemetry.addData("Path", "Going straightv: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
         }
