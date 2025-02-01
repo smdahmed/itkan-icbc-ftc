@@ -54,7 +54,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backRight.setPower(-1);
         hangSampleAndPark.backLeft.setPower(-1);
-        while (hangSampleAndPark.backRight.isBusy() && hangSampleAndPark.backLeft.isBusy()) {
+        while (isNotInPosition(hangSampleAndPark.backRight) && isNotInPosition(hangSampleAndPark.backLeft)) {
             hangSampleAndPark.telemetry.addData("Path", "Going backwards: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();

@@ -45,6 +45,8 @@ public class HangSampleAndPark extends LinearOpMode {
         robotSampleServo.setPower(0);
         encoderInterface.extendViperKit(0);
         viperKit.setPower(0);
+        sleep(2000);
+
         //Park after hanging sample.
         encoderInterface.goStraightVelocity(20);
         encoderInterface.turnRightVelocity((int) 45);
