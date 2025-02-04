@@ -32,7 +32,7 @@ public class EncoderInterface {
         hangSampleAndPark.backRight.setPower(0.5);
         hangSampleAndPark.backLeft.setPower(0.5);
         while (hangSampleAndPark.backRight.isBusy() && hangSampleAndPark.backLeft.isBusy()) {
-            hangSampleAndPark.telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
+            hangSampleAndPark.telemetry.addData("Path", "Going straighte: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
         }
@@ -48,8 +48,8 @@ public class EncoderInterface {
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
-        hangSampleAndPark.backRight.setTargetPosition(-target);
-        hangSampleAndPark.backLeft.setTargetPosition(-target);
+        hangSampleAndPark.backRight.setTargetPosition(target);
+        hangSampleAndPark.backLeft.setTargetPosition(target);
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.backRight.setPower(-1);
