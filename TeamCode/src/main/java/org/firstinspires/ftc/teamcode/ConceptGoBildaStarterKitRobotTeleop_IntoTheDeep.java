@@ -116,7 +116,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double ARM_ATTACH_HANGING_HOOK   = 140 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
     final double VIPER_OUT                 = (-4 * 360 - 3) * VIPER_TICKS_PER_DEGREE;
-    final double ARM_INIT                  = 5 * ARM_TICKS_PER_DEGREE;
+    final double ARM_INIT                  = 3 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
@@ -340,7 +340,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 viperPosition = 0;
             }
             else if (gamepad2.dpad_right){
-                viperPosition = 0;
+                viperPosition = VIPER_INIT;
                 viperKit.setPower(0.5);
                 viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
@@ -350,15 +350,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 intake.setPower(INTAKE_OFF);
             }
 
-            else if (gamepad2.guide){
-                autoSub();
-            }
-
-            else if (gamepad2.leftStickButton){
+            else if (gamepad2.left_stick_button){
                 inSub();
+                intake.setPower(INTAKE_COLLECT);
+                sleep(500);
+                armMotor.setTargetPosition((int) ARM_COLLECT);
             }
 
-            else if (gamepad2.leftStickButton){
+            else if (gamepad2.right_stick_button){
                 outSub();
             }
 
@@ -452,7 +451,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // intake on
         intake.setPower(INTAKE_COLLECT);
         //Extend Viper Kit in submersible
-        armPosition = ARM_COLLECT;
         viperPosition = VIPER_OUT;
         viperKit.setTargetPosition((int) VIPER_OUT);
         ((DcMotorEx) viperKit).setVelocity(1600);
@@ -461,12 +459,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Bring arm down to intake better
         intake.setPower(INTAKE_COLLECT);
         sleep(500);
-        armMotor.setTargetPosition((int) (25 * ARM_TICKS_PER_DEGREE));
+        armMotor.setTargetPosition((int) ARM_COLLECT);
     }
 
     public void outSub(){
-        //Take the sample back in
         viperPosition = 0;
-        //
     }
 }
