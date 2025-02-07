@@ -122,7 +122,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
     final double INTAKE_OFF        =  0.0;
-    final double INTAKE_DEPOSIT    =  0.5;
+    // Usually 0.5 but 1.0 is giving good results.
+    final double INTAKE_DEPOSIT    =  1.0;
 
     /* Variables to store the positions that the wrist should be set to when folding in, or folding out. */
     // final double WRIST_FOLDED_IN   = 0;
