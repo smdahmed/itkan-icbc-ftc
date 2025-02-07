@@ -449,9 +449,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         sleep(300);
         viperPosition = 0;
 
-
-
-
     }
 
 }
