@@ -76,17 +76,20 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public CRServo  intake      = null; //the active intake servo
     // public Servo    wrist       = null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
-
+    public DcMotor backRight    = null;
+    public DcMotor backLeft     = null;
+    public DcMotor frontLeft    = null;
+    public DcMotor frontRight   = null;
 
     /* This constant is the number of encoder ticks for each degree of rotation of the arm.
-    To find this, we first need to consider the total gear reduction powering our arm.
-    First, we have an external 20t:100t (5:1) reduction created by two spur gears.
-    But we also have an internal gear reduction in our motor.
-    The motor we use for this arm is a 117RPM Yellow Jacket. Which has an internal gear
-    reduction of ~50.9:1. (more precisely it is 250047/4913:1)
-    We can multiply these two ratios together to get our final reduction of ~254.47:1.
-    The motor's encoder counts 28 times per rotation. So in total you should see about 7125.16
-    counts per rotation of the arm. We divide that by 360 to get the counts per degree. */
+        To find this, we first need to consider the total gear reduction powering our arm.
+        First, we have an external 20t:100t (5:1) reduction created by two spur gears.
+        But we also have an internal gear reduction in our motor.
+        The motor we use for this arm is a 117RPM Yellow Jacket. Which has an internal gear
+        reduction of ~50.9:1. (more precisely it is 250047/4913:1)
+        We can multiply these two ratios together to get our final reduction of ~254.47:1.
+        The motor's encoder counts 28 times per rotation. So in total you should see about 7125.16
+        counts per rotation of the arm. We divide that by 360 to get the counts per degree. */
     final double ARM_TICKS_PER_DEGREE =
             28 // number of encoder ticks per rotation of the bare motor
                     * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
@@ -152,23 +155,28 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
 
         /* Define and Initialize Motors */
-        leftDrive = hardwareMap.get(DcMotor.class, "left_front_drive"); //the left drivetrain motor
-        rightDrive = hardwareMap.get(DcMotor.class, "right_front_drive"); //the right drivetrain motor
+        backLeft = hardwareMap.get(DcMotor.class, "left_front_drive"); //the left drivetrain motor
+        backRight = hardwareMap.get(DcMotor.class, "right_front_drive"); //the right drivetrain motor
         armMotor = hardwareMap.get(DcMotor.class, "left_arm"); //the arm motor
         viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
+        frontLeft = hardwareMap.get(DcMotor.class, "motor5");
+        frontRight = hardwareMap.get(DcMotor.class, "motor6");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
         for this robot, we reverse the right motor.*/
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
 
         /* Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to slow down
         much faster when it is coasting. This creates a much more controllable drivetrain. As the robot
         stops much quicker. */
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperKit.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -210,38 +218,26 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         /* Run until the driver presses stop */
         while (opModeIsActive()) {
 
-            /* Set the drive and turn variables to follow the joysticks on the gamepad.
-            the joysticks decrease as you push them up. So reverse the Y axis. */
-            forward = -gamepad1.left_stick_y;
-            rotate  = gamepad1.right_stick_x; // Flipped sticks to optimize for driver.
+            double y = gamepad1.left_stick_y;  // Forward/Backward
+            double x = gamepad1.left_stick_x * 0.5; // Strafing (adjustment factor for imperfect strafing)
+            double rotation = gamepad1.right_stick_x; // Rotation
 
-            if (forward > 0.5) {
-                forward = 0.5;
-            }
+            // Calculate motor power
+            double frontLeftPower = y + x + rotation;
+            double frontRightPower = y - x - rotation;
+            double backLeftPower = y - x + rotation;
+            double backRightPower = y + x - rotation;
 
+            // Normalize values so no motor gets more than 1.0 power
+            double maximum = Math.max(1.0, Math.abs(frontLeftPower));
+            maximum = Math.max(maximum, Math.abs(frontRightPower));
+            maximum = Math.max(maximum, Math.abs(backLeftPower));
+            maximum = Math.max(maximum, Math.abs(backRightPower));
 
-            /* Here we "mix" the input channels together to find the power to apply to each motor.
-            The both motors need to be set to a mix of how much you're retesting the robot move
-            forward, and how much you're requesting the robot turn. When you ask the robot to rotate
-            the right and left motors need to move in opposite directions. So we will add rotate to
-            forward for the left motor, and subtract rotate from forward for the right motor. */
-
-            left  = (forward + rotate);
-            right = (forward - rotate);
-
-            /* Normalize the values so neither exceed +/- 0.6 */
-            // Changed from 1.0 -> 0.8 to allow for more precision driving (boost button will be for faster driving)
-            max = Math.max(Math.abs(left), Math.abs(right));
-            if (max > 1)
-            {
-                telemetry.addData("max_val: ", max);
-                left /= max;
-                right /= max;
-            }
-
-            /* Set the motor power to the variables we've mixed and normalized */
-            leftDrive.setPower(left);
-            rightDrive.setPower(right);
+            frontLeft.setPower(frontLeftPower / maximum);
+            frontRight.setPower(frontRightPower / maximum);
+            backLeft.setPower(backLeftPower / maximum);
+            backRight.setPower(backRightPower / maximum);
 
 
 
@@ -271,11 +267,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 intake.setPower(INTAKE_DEPOSIT);
             }
             //Boost Button (WIP)
-            if (gamepad1.right_trigger > 0.0) {
-                leftDrive.setPower(1.0);
-                rightDrive.setPower(1.0);
+            //if (gamepad1.right_trigger > 0.0) {
+                //leftDrive.setPower(1.0);
+                //rightDrive.setPower(1.0);
 
-            }
+            //}
 
             /* Here we implement a set of if else statements to set our arm to different scoring positions.
             We check to see if a specific button is pressed, and then move the arm (and sometimes
@@ -342,12 +338,15 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             else if (gamepad2.dpad_right){
                 viperPosition = VIPER_INIT;
                 viperKit.setPower(0.5);
+
                 viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             //Endgame Auto Hang (By pressing PS Central Button):
             else if (gamepad1.guide){
-                autoHang();
-                intake.setPower(INTAKE_OFF);
+                //autoHang();
+                //intake.setPower(INTAKE_OFF);
+                //motor5.setPower(1);
+
             }
 
             else if (gamepad2.left_stick_button){
@@ -433,11 +432,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(2100);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftDrive.setPower(1.0);
-        rightDrive.setPower(1.0);
-        sleep(1000);
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+//        leftDrive.setPower(1.0);
+//        rightDrive.setPower(1.0);
+//        sleep(1000);
+//        leftDrive.setPower(0);
+//        rightDrive.setPower(0);
     }
 
     public void inSub(){
