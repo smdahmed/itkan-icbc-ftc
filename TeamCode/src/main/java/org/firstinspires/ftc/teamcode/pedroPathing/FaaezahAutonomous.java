@@ -18,8 +18,8 @@ public class FaaezahAutonomous extends OpMode {
     private ElapsedTime runtime;
 
     // Constants for movement
-    private final double DRIVE_SPEED = 0.5;
-    private final double TURN_SPEED = 0.4;
+    private final double DRIVE_SPEED = 0.15;
+    private final double TURN_SPEED = 0.1;
 
     @Override
     public void init() {
