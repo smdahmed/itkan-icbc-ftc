@@ -7,6 +7,7 @@ import com.pedropathing.util.CustomPIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
+
     static {
         FollowerConstants.localizers = Localizers.PINPOINT;
 
@@ -48,5 +49,6 @@ public class FConstants {
         FollowerConstants.pathEndVelocityConstraint = 0.1;
         FollowerConstants.pathEndTranslationalConstraint = 0.1;
         FollowerConstants.pathEndHeadingConstraint = 0.007;
+
     }
 }
