@@ -33,10 +33,11 @@ public class HangSampleAndPark extends LinearOpMode {
         encoderInterface.initializeDevices();
         encoderInterface.setupEncoders();
         waitForStart();
+        sleep(5000);
 
         //Start with sample in basket.
         encoderInterface.moveArmUp();
-        encoderInterface.goStraight(38);
+        encoderInterface.goStraight(-38);
         robotSampleServo.setPower(-1);
         encoderInterface.extendViperKit(-55);
         encoderInterface.moveArmDown(50);
@@ -45,13 +46,13 @@ public class HangSampleAndPark extends LinearOpMode {
         robotSampleServo.setPower(0);
         encoderInterface.extendViperKit(0);
         viperKit.setPower(0);
-
-        //Park after hanging sample.
-        encoderInterface.goStraight(20);
-        encoderInterface.turnRight((int) 45);
-        encoderInterface.goStraight(95);
-        encoderInterface.turnLeft((int) 45);
-        encoderInterface.goBackwards(38);
-        telemetry.addData("Status", "Ended");
+        sleep(500);
+        //Park after hanging sample
+        //encoderInterface.turnRight((int) -65);
+        encoderInterface.goStraight(40);
+//        encoderInterface.goStraight(95);
+//        encoderInterface.turnLeft((int) 45);
+//        encoderInterface.goBackwards(38);
+//        telemetry.addData("Status", "Ended");
     }
 }
