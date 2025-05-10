@@ -224,7 +224,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // wrist.setPosition(WRIST_FOLDED_IN);
 
         /* Send telemetry message to signify robot waiting */
-        telemetry.addLine("Robot Ready.");npt
+        telemetry.addLine("Robot Ready.");
         telemetry.update();
         /* Wait for the game driver to press play */
         waitForStart();
