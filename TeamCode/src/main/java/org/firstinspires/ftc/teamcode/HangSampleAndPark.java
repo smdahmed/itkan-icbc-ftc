@@ -17,7 +17,7 @@ public class HangSampleAndPark extends LinearOpMode {
 
     //Ticks is motor rate * the ratio provided by Gobilda.
     public final double ticks = 537.7;
-    //Circumference is based on the wheel size.
+    //Circumference is based on the wheel size.o
     public final double circumference = 301.59;
     public final double ARM_TICKS_PER_DEGREE =
             28 // number of encoder ticks per rotation of the bare motor
