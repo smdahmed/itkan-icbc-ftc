@@ -115,10 +115,10 @@ public class ForwardVelocityTuner extends OpMode {
      */
     @Override
     public void start() {
-        leftFront.setPower(1);
-        leftRear.setPower(1);
-        rightFront.setPower(1);
-        rightRear.setPower(1);
+        leftFront.setPower(-1);
+        leftRear.setPower(-1);
+        rightFront.setPower(-1);
+        rightRear.setPower(-1);
         end = false;
     }
 
