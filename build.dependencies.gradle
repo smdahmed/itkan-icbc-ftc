@@ -17,10 +17,4 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.pedropathing:pedro:1.0.8'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
-    dependencies {
-        implementation project(':FtcRobotController')
-        implementation "org.solverslib:core:0.2.5"
-        implementation "org.solverslib:pedroPathing:0.2.5"
-    }
-
 }

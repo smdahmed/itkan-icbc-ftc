@@ -228,7 +228,6 @@ public class pedrobrickbucket extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
     }
-x
     @Override
     public void init() {
         pathTimer = new Timer();
