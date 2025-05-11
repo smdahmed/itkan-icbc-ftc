@@ -4,15 +4,19 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class AlishbaPedroHanging extends LinearOpMode {
+@Autonomous(name = "HighBasketScoring", group = "Robot")
+public class AlishbaHighBasket extends LinearOpMode {
 
     private DcMotorEx backLeft, backRight, armMotor, viperKit;
     private CRServo robotSampleServo;
+    private final double ARM_TICKS_PER_DEGREE =
+            28 * 250047.0 / 4913.0 * 100.0 / 20.0 * 1 / 360.0;
+    private final double ARM_SCORE_SAMPLE_IN_HIGH = 100 * ARM_TICKS_PER_DEGREE;
 
     @Override
     public void runOpMode() {
@@ -23,7 +27,6 @@ public class AlishbaPedroHanging extends LinearOpMode {
         viperKit = hardwareMap.get(DcMotorEx.class, "viperKit");
         robotSampleServo = hardwareMap.get(CRServo.class, "robotSampleServo");
 
-        // Encoder and Brake Configurations
         configureMotor(backLeft);
         configureMotor(backRight);
         configureMotor(armMotor);
@@ -31,45 +34,47 @@ public class AlishbaPedroHanging extends LinearOpMode {
 
         waitForStart();
 
-        // Pedro Pathing - Move to Rod 2
         PathBuilder builder = new PathBuilder();
+
+        // Move to the high basket
         PathChain line1 = builder
                 .addPath(new BezierLine(
-                        new Point(8.000, 80.000, Point.CARTESIAN),
-                        new Point(39.923, 79.615, Point.CARTESIAN)
+                        new Point(8.538, 105.231, Point.CARTESIAN),
+                        new Point(10.846, 130.154, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
-        // Move Robot Forward (Adjusted Distance for Rod 2)
-        driveForward(0.7, 850);
+        // Move arm to high basket position
+        moveArmToHighBasket();
 
-        // Lift Arm for Hanging on Rod 2
-        moveArmToRod2();
+        // Drop sample into high basket
+        dropSample();
 
-        // Extend Viper Kit for Stability on Rod 2
-        extendViperKit(-60);
+        // Exit path after scoring
+        PathChain exitPath = builder
+                .addPath(new BezierLine(
+                        new Point(10.615, 129.923, Point.CARTESIAN),
+                        new Point(60.231, 95.538, Point.CARTESIAN)
+                ))
+                .setTangentHeadingInterpolation()
+                .build();
 
-        // Drop Sample using Servo
-        robotSampleServo.setPower(-1);
-        sleep(500);
-        robotSampleServo.setPower(0);
-
-        // Park After Hanging
+        // Park after scoring
         driveForward(0.6, 40);
     }
 
     private void configureMotor(DcMotorEx motor) {
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     private void driveForward(double power, int targetTicks) {
         backLeft.setTargetPosition(backLeft.getCurrentPosition() + targetTicks);
         backRight.setTargetPosition(backRight.getCurrentPosition() + targetTicks);
 
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         backLeft.setPower(power);
         backRight.setPower(power);
@@ -83,30 +88,22 @@ public class AlishbaPedroHanging extends LinearOpMode {
         backRight.setPower(0);
     }
 
-    private void moveArmToRod2() {
-        int rod2TargetPosition = 950; // Adjusted height for Rod 2
-        armMotor.setTargetPosition(rod2TargetPosition);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    private void moveArmToHighBasket() {
+        armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_HIGH);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1.0);
 
         while (armMotor.isBusy() && opModeIsActive()) {
-            telemetry.addData("Arm", "Lifting to Rod 2...");
+            telemetry.addData("Arm", "Moving to High Basket...");
             telemetry.update();
         }
 
         armMotor.setPower(0);
     }
 
-    private void extendViperKit(int targetTicks) {
-        viperKit.setTargetPosition(viperKit.getCurrentPosition() + targetTicks);
-        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperKit.setPower(0.8);
-
-        while (viperKit.isBusy() && opModeIsActive()) {
-            telemetry.addData("Viper Kit", "Extending for Rod 2...");
-            telemetry.update();
-        }
-
-        viperKit.setPower(0);
+    private void dropSample() {
+        robotSampleServo.setPower(-1);
+        sleep(500);
+        robotSampleServo.setPower(0);
     }
 }
