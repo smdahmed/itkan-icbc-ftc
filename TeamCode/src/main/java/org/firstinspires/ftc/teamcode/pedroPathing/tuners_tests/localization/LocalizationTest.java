@@ -8,6 +8,7 @@ import static com.pedropathing.follower.FollowerConstants.leftFrontMotorDirectio
 import static com.pedropathing.follower.FollowerConstants.leftRearMotorDirection;
 import static com.pedropathing.follower.FollowerConstants.rightFrontMotorDirection;
 import static com.pedropathing.follower.FollowerConstants.rightRearMotorDirection;
+import com.pedropathing.localization.Pose;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -58,6 +59,7 @@ public class LocalizationTest extends OpMode {
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
         poseUpdater = new PoseUpdater(hardwareMap);
+        poseUpdater.setPose(new com.pedropathing.localization.Pose(0, 0, 0));
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
