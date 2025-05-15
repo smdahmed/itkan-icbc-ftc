@@ -112,8 +112,7 @@ public class FaaezahAutoImprov extends OpMode {
         // Debug telemetry
         telemetryA.addData("State", state);
         follower.telemetryDebug(telemetryA);
-
-
+        telemetryA.update();
     }
 }
 
