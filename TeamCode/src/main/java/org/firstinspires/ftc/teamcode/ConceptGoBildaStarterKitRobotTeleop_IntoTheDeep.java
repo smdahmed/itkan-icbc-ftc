@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.localization.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -84,7 +85,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public DcMotor  leftDrive   = null; //the left drivetrain motor
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
-    public CRServo  intake      = null; //the active intake servo
+    public Servo    claw        = null; //the servo for claw
     // public Servo    wrist       = null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
     public DcMotor backRight    = null;
@@ -132,6 +133,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double VIPER_OUT                 = -4 * VIPER_TICKS_PER_DEGREE;
     final double ARM_INIT                  = 3 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
+    final double clawClosed                  = claw.MAX_POSITION;
+    final double clawOpen                = claw.MIN_POSITION;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -174,7 +177,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         frontLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
         frontRight = hardwareMap.get(DcMotor.class, "right_front_drive");
         //myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        intake = hardwareMap.get(CRServo.class, "intake");
+        claw = hardwareMap.get(Servo.class, "claw");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
@@ -220,7 +223,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // wrist  = hardwareMap.get(Servo.class, "wrist");
 
         /* Make sure that the intake is off, and the wrist is folded in. */
-        intake.setPower(INTAKE_OFF);
+        // intake.setPower(INTAKE_OFF);
         // wrist.setPosition(WRIST_FOLDED_IN);
 
         /* Send telemetry message to signify robot waiting */
@@ -274,14 +277,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             //ANYTHING related to arm/intake will be set to gamepad2 so operator can have seperate controller
 
             if (gamepad2.a) {
-                intake.setPower(INTAKE_COLLECT);
+                claw.setPosition(clawClosed);
             }
             else if (gamepad2.x) {
-                intake.setPower(INTAKE_OFF);
+                claw.setPosition(clawOpen);
             }
-            else if (gamepad2.b) {
-                intake.setPower(INTAKE_DEPOSIT);
-            }
+            //else if (gamepad2.b) {
+            //    intake.setPower(INTAKE_DEPOSIT);
+            //}
             //Boost Button (WIP)
             //if (gamepad1.right_trigger > 0.0) {
                 //leftDrive.setPower(1.0);
@@ -300,7 +303,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 /* This is the setup for intaking from the submersible. Press left trigger to extend and pick up samples from submersible */
                 armPosition = ARM_COLLECT;
                 // wrist.setPosition(WRIST_FOLDED_OUT);
-                intake.setPower(INTAKE_COLLECT);
+                claw.setPosition(clawOpen);
             }
 
             else if (gamepad2.left_bumper){
@@ -321,7 +324,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 /* This turns off the intake, folds in the wrist, and moves the arm
                 back to folded inside the robot. This is also the starting configuration */
                 armPosition = ARM_INIT;
-                intake.setPower(INTAKE_OFF);
+                claw.setPosition(clawOpen);
                 // wrist.setPosition(WRIST_FOLDED_IN);
                 viperPosition = -VIPER_INIT;
             }
@@ -329,14 +332,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             else if (gamepad2.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
                 armPosition = ARM_ATTACH_HANGING_HOOK;
-                intake.setPower(INTAKE_OFF);
+                claw.setPosition(clawOpen);
                 // wrist.setPosition(WRIST_FOLDED_IN);
             }
 
             else if (gamepad2.dpad_down){
                 /* this moves the arm down to lift the robot up once it has been hooked */
                 armPosition = ARM_WINCH_ROBOT;
-                intake.setPower(INTAKE_OFF);
+                claw.setPosition(clawOpen);
                 // wrist.setPosition(WRIST_FOLDED_IN);
             }
             else if (gamepad2.left_trigger > 0.0){
@@ -367,7 +370,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             else if (gamepad2.left_stick_button){
                 inSub();
-                intake.setPower(INTAKE_COLLECT);
+                claw.setPosition(clawClosed);
                 sleep(500);
                 armMotor.setTargetPosition((int) ARM_COLLECT);
             }
@@ -452,7 +455,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(2100);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(INTAKE_OFF);
+        claw.setPosition(clawOpen);
         sleep(1500);
         armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
         // Reduced arm velocity so it wouldn't jitter when moving
@@ -470,11 +473,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         armMotor.setTargetPosition((int) (ARM_GET_SAMPLE)); // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(1600);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(INTAKE_OFF);
+        claw.setPosition(clawOpen);
         sleep(1500);
 
         // intake on
-        intake.setPower(INTAKE_COLLECT);
+        claw.setPosition(clawClosed);
         //Extend Viper Kit in submersible
         viperPosition = VIPER_OUT;
         viperKit.setTargetPosition((int) VIPER_OUT);
@@ -482,7 +485,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Bring arm down to intake better
-        intake.setPower(INTAKE_COLLECT);
+        claw.setPosition(clawClosed);
         sleep(500);
         armMotor.setTargetPosition((int) ARM_COLLECT);
     }
