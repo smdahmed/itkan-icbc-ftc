@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.DeprecatedAuto;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class EncoderInterface {
     HangSampleAndPark hangSampleAndPark;
 
-    EncoderInterface(HangSampleAndPark hangSampleAndPark) {
+    public EncoderInterface(HangSampleAndPark hangSampleAndPark) {
         this.hangSampleAndPark = hangSampleAndPark;
     }
 
@@ -154,7 +154,7 @@ public class EncoderInterface {
         return -motor.getCurrentPosition() < -motor.getTargetPosition();
     }
 
-    void initializeDevices() {
+    public void initializeDevices() {
         hangSampleAndPark.backRight = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         hangSampleAndPark.backLeft = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_front_drive");
         hangSampleAndPark.arm = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_arm");
@@ -173,7 +173,7 @@ public class EncoderInterface {
         hangSampleAndPark.telemetry.update();
     }
 
-    void setupEncoders() {
+    public void setupEncoders() {
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

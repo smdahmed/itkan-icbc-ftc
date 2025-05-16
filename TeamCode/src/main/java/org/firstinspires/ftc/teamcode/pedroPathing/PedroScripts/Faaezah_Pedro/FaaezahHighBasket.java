@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
-
-import static org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopPOV_Linear.MID_SERVO;
+package org.firstinspires.ftc.teamcode.pedroPathing.PedroScripts.Faaezah_Pedro;
 
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;

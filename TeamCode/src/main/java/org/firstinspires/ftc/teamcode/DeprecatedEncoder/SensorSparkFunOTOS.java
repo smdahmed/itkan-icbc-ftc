@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode;/*
+package org.firstinspires.ftc.teamcode.DeprecatedEncoder;/*
     SPDX-License-Identifier: MIT
 
     Copyright (c) 2024 SparkFun Electronics
 */
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 

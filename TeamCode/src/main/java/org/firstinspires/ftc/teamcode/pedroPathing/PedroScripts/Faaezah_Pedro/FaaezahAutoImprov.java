@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing.PedroScripts.Faaezah_Pedro;
 
 /***********************************************************************************************
  * Date: 7th May 2025
