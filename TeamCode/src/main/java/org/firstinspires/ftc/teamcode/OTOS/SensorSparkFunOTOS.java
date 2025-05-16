@@ -1,14 +1,68 @@
-package org.firstinspires.ftc.teamcode.DeprecatedEncoder;
+package org.firstinspires.ftc.teamcode.OTOS;/*
+    SPDX-License-Identifier: MIT
+
+    Copyright (c) 2024 SparkFun Electronics
+*/
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class SensorInterface {
+/*
+ * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
+ *
+ * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+ *
+ * See the sensor's product page: https://www.sparkfun.com/products/24904
+ */
+//@Disabled
+@TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
+//@Disabled
+public class SensorSparkFunOTOS extends LinearOpMode {
+    // Create an instance of the sensor
+    SparkFunOTOS myOtos;
 
-    public void configureOtos(Telemetry telemetry, SparkFunOTOS myOtos) {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        // Get a reference to the sensor
+        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+
+        // All the configuration for the OTOS is done in this helper method, check it out!
+        configureOtos();
+
+        // Wait for the start button to be pressed
+        waitForStart();
+
+        // Loop until the OpMode ends
+        while (opModeIsActive()) {
+            // Get the latest position, which includes the x and y coordinates, plus the
+            // heading angle
+            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+
+            // Reset the tracking if the user requests it
+
+            // Inform user of available controls
+            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
+            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
+            telemetry.addLine();
+
+            // Log the position to the telemetry
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+
+            // Update the telemetry on the driver station
+            telemetry.update();
+        }
+    }
+
+    public void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
 
