@@ -85,7 +85,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public DcMotor  leftDrive   = null; //the left drivetrain motor
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
-    public Servo    claw        = null; //the servo for claw
+    public Servo    claw1       = null; //the first servo for claw
+    public Servo    claw2       = null; //the second servo for claw
     // public Servo    wrist       = null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
     public DcMotor backRight    = null;
@@ -133,8 +134,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double VIPER_OUT                 = -4 * VIPER_TICKS_PER_DEGREE;
     final double ARM_INIT                  = 3 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
-    final double clawClosed                  = claw.MAX_POSITION;
-    final double clawOpen                = claw.MIN_POSITION;
+    final double clawClosed                  = claw1.MAX_POSITION;
+    final double clawOpen                = claw1.MIN_POSITION;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -177,7 +178,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         frontLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
         frontRight = hardwareMap.get(DcMotor.class, "right_front_drive");
         //myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        claw = hardwareMap.get(Servo.class, "claw");
+        claw1 = hardwareMap.get(Servo.class, "claw1");
+        claw2 = hardwareMap.get(Servo.class, "claw2");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
