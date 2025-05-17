@@ -112,6 +112,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                     * 13.7
                     * 1/360.0;
 
+    final double VIPER_TICKS_PER_ROTATION =
+            28
+                    * 13.7;
     /* These constants hold the position that the arm is commanded to run to.
     These are relative to where the arm was located when you start the OpMode. So make sure the
     arm is reset to collapsed inside the robot before you start the program.
@@ -124,22 +127,23 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     as far from the starting position, decrease it. */
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-    final double ARM_COLLECT               = 20 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
+    final double ARM_COLLECT               = 15 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
     final double ARM_GET_SAMPLE            = 30 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_HIGH  = 100 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 140 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
-    final double VIPER_OUT                 = -4 * VIPER_TICKS_PER_DEGREE;
-    final double ARM_INIT                  = 3 * ARM_TICKS_PER_DEGREE;
+    final double VIPER_OUT                 = -0.5 * VIPER_TICKS_PER_ROTATION;
+    final double ARM_INIT                  = 80 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
-    final double clawClosed                  = claw.MAX_POSITION;
-    final double clawOpen                = claw.MIN_POSITION;
+
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
     final double INTAKE_OFF        =  0.0;
     final double INTAKE_DEPOSIT    =  0.5;
+    final double clawClosed                = claw.MAX_POSITION;
+    final double clawOpen                  = claw.MIN_POSITION;
 
     /* Variables to store the positions that the wrist should be set to when folding in, or folding out. */
     // final double WRIST_FOLDED_IN   = 0;
@@ -149,7 +153,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     //final double FUDGE_FACTOR = 10 * ARM_TICKS_PER_DEGREE;
 
     /* Variables that are used to set the arm to a specific position */
-    double armPosition = (int) ARM_INIT;
+    double armPosition = (int) ARM_COLLAPSED_INTO_ROBOT;
 
 
     // Variable used to set the Viper Kit to a specific Position
@@ -184,6 +188,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         for this robot, we reverse the right motor.*/
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         viperKit.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -345,7 +351,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             else if (gamepad2.left_trigger > 0.0){
                 // Extends the viper kit out
                 viperPosition = VIPER_OUT; //CHE
-                if (armPosition == ARM_INIT){
+                if (armPosition == ARM_COLLAPSED_INTO_ROBOT || armPosition == ARM_INIT){
                     viperPosition = 0;
                     viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
@@ -432,10 +438,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
 
             /* send telemetry to the driver of the arm's current position and target position */
-            telemetry.addData("armTarget: ", armMotor.getTargetPosition());
-            telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
-            telemetry.addData("viperKitTarget: ", viperKit.getTargetPosition());
-            telemetry.addData("viperKitCurrPosition: ", viperKit.getCurrentPosition());
+            telemetry.addData("armTarget: ", armMotor.getTargetPosition() / 360.0);
+            telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition() / 360.0);
+            telemetry.addData("viperKitTarget: ", viperKit.getTargetPosition() / 360.0);
+            telemetry.addData("viperKitCurrPosition: ", viperKit.getCurrentPosition() / 360.0);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addLine();

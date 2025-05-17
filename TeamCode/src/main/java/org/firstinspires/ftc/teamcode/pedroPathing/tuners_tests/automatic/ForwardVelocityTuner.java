@@ -123,7 +123,7 @@ public class ForwardVelocityTuner extends OpMode {
 
     /**
      * This runs the OpMode. At any point during the running of the OpMode, pressing CROSS or A on
-     * game pad 1 will stop the OpMode. This continuously records the RECORD_NUMBER most recent
+             * game pad 1 will stop the OpMode. This continuously records the RECORD_NUMBER most recent
      * velocities, and when the robot has run forward enough, these last velocities recorded are
      * averaged and printed.
      */
