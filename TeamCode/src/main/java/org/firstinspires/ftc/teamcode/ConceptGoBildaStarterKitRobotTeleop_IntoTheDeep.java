@@ -246,8 +246,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         while (opModeIsActive()) {
             //SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.5;  // Adjust for imperfect strafing
+            double y = gamepad1.left_stick_x;
+            double x = -gamepad1.left_stick_y * 1.5;  // Adjust for imperfect strafing
             double rotation = gamepad1.right_stick_x;
 
             double frontLeftPower = y - x + rotation;
