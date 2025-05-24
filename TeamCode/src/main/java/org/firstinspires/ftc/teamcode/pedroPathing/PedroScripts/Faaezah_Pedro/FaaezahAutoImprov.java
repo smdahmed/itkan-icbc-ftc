@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing.PedroScripts.Faaezah_Pedro;
 
 /***********************************************************************************************
  * Date: 7th May 2025
@@ -112,8 +112,7 @@ public class FaaezahAutoImprov extends OpMode {
         // Debug telemetry
         telemetryA.addData("State", state);
         follower.telemetryDebug(telemetryA);
-
-
+        telemetryA.update();
     }
 }
 

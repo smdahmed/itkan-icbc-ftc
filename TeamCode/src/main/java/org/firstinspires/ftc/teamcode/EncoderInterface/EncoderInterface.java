@@ -1,20 +1,27 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.EncoderInterface;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.HangSampleAndPark;
+
 public class EncoderInterface {
     HangSampleAndPark hangSampleAndPark;
+    final double ARM_TICKS_PER_DEGREE =
+            28 // number of encoder ticks per rotation of the bare motor
+                    * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
+                    * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
+                    * 1/360.0; // we want ticks per degree, not per rotation
 
-    EncoderInterface(HangSampleAndPark hangSampleAndPark) {
+    public EncoderInterface(HangSampleAndPark hangSampleAndPark) {
         this.hangSampleAndPark = hangSampleAndPark;
     }
 
-    void extendViperKit(int viperPosition) {
+    public void extendViperKit(int viperPosition) {
         hangSampleAndPark.viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Set the target position to the position the driver asked for
-        hangSampleAndPark.viperKit.setTargetPosition((int) (viperPosition * hangSampleAndPark.ARM_TICKS_PER_DEGREE));
+        hangSampleAndPark.viperKit.setTargetPosition((int) (viperPosition * ARM_TICKS_PER_DEGREE));
         // Set the velocity of the motor and use setMode to run
         hangSampleAndPark.viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.viperKit.setPower(1);
@@ -23,7 +30,7 @@ public class EncoderInterface {
         }
     }
 
-    void goStraight(int distance) {
+    public void goStraight(int distance) {
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
         hangSampleAndPark.backRight.setTargetPosition(target);
         hangSampleAndPark.backLeft.setTargetPosition(target);
@@ -32,7 +39,7 @@ public class EncoderInterface {
         hangSampleAndPark.backRight.setPower(0.5);
         hangSampleAndPark.backLeft.setPower(0.5);
         while (hangSampleAndPark.backRight.isBusy() && hangSampleAndPark.backLeft.isBusy()) {
-            hangSampleAndPark.telemetry.addData("Path", "Going straighte: Current position: %s Target Position:%s",
+            hangSampleAndPark.telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
         }
@@ -43,7 +50,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void goBackwards(int distance) {
+    public void goBackwards(int distance) {
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -66,7 +73,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void turnRight(int distance) {
+    public void turnRight(int distance) {
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
         hangSampleAndPark.backRight.setTargetPosition(-target);
         hangSampleAndPark.backLeft.setTargetPosition(target);
@@ -89,7 +96,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void turnLeft(int distance) {
+    public void turnLeft(int distance) {
         //For some reason the simulator does not accepted casted values.
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
 
@@ -113,7 +120,7 @@ public class EncoderInterface {
 
     }
 
-    void moveArmDown(int distance) {
+    public void moveArmDown(int distance) {
         //For some reason the simulator does not accepted casted values.
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
 
@@ -130,8 +137,8 @@ public class EncoderInterface {
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    void moveArmUp() {
-        hangSampleAndPark.arm.setTargetPosition((int) hangSampleAndPark.ARM_SCORE_SAMPLE_IN_HIGH);
+    public void moveArmUp() {
+        hangSampleAndPark.arm.setTargetPosition((int) HangSampleAndPark.ARM_SCORE_SAMPLE_IN_HIGH);
         hangSampleAndPark.arm.setPower(0.5);
         hangSampleAndPark.arm.setPower(1);
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -154,7 +161,7 @@ public class EncoderInterface {
         return -motor.getCurrentPosition() < -motor.getTargetPosition();
     }
 
-    void initializeDevices() {
+    public void initializeDevices() {
         hangSampleAndPark.backRight = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         hangSampleAndPark.backLeft = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_front_drive");
         hangSampleAndPark.arm = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_arm");
@@ -162,10 +169,7 @@ public class EncoderInterface {
         hangSampleAndPark.arm.setTargetPosition(15);
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.arm.setPower(1);
-        hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "intake");
-        hangSampleAndPark.viperKit = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "viper_kit");
-        hangSampleAndPark.viperKit.setTargetPosition(0);
-        hangSampleAndPark.viperKit.setPower(0.5);
+        //hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "intake");
 
         hangSampleAndPark.backRight.setDirection(DcMotor.Direction.REVERSE);
         hangSampleAndPark.backLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -173,13 +177,12 @@ public class EncoderInterface {
         hangSampleAndPark.telemetry.update();
     }
 
-    void setupEncoders() {
+    public void setupEncoders() {
         hangSampleAndPark.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         hangSampleAndPark.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hangSampleAndPark.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangSampleAndPark.viperKit.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangSampleAndPark.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
