@@ -236,7 +236,6 @@ public class TeleOPAlishba extends LinearOpMode {
             forward = -gamepad1.left_stick_y;
             rotate  = gamepad1.right_stick_x;
 
-
             /* Here we "mix" the input channels together to find the power to apply to each motor.
             The both motors need to be set to a mix of how much you're retesting the robot move
             forward, and how much you're requesting the robot turn. When you ask the robot to rotate
