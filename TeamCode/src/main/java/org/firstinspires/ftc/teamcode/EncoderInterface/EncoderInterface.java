@@ -165,11 +165,12 @@ public class EncoderInterface {
         hangSampleAndPark.backRight = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "right_front_drive");
         hangSampleAndPark.backLeft = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_front_drive");
         hangSampleAndPark.arm = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "left_arm");
+        hangSampleAndPark.viperKit = hangSampleAndPark.hardwareMap.get(DcMotorEx.class, "viper_kit");
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hangSampleAndPark.arm.setTargetPosition(15);
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.arm.setPower(1);
-        //hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "intake");
+        hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "claw");
 
         hangSampleAndPark.backRight.setDirection(DcMotor.Direction.REVERSE);
         hangSampleAndPark.backLeft.setDirection(DcMotor.Direction.FORWARD);

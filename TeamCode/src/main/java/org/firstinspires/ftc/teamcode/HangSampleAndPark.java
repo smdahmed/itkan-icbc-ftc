@@ -28,7 +28,7 @@ public class HangSampleAndPark extends LinearOpMode {
                     * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                     * 1 / 360.0; // we want ticks per degree, not per rotation
 
-    public static final Object ARM_SCORE_SAMPLE_IN_HIGH = 100 * ARM_TICKS_PER_DEGREE;
+    public static double ARM_SCORE_SAMPLE_IN_HIGH = 100 * ARM_TICKS_PER_DEGREE;
 
     @Override
     public void runOpMode() {
@@ -39,21 +39,21 @@ public class HangSampleAndPark extends LinearOpMode {
 
         //Start with sample in basket.
         encoderInterface.moveArmUp();
-        encoderInterface.goStraight(38);
+        encoderInterface.goStraight(-38);
         robotSampleServo.setPower(-1);
-        encoderInterface.extendViperKit(-55);
-        encoderInterface.moveArmDown(50);
-        encoderInterface.goBackwards(25);
         encoderInterface.extendViperKit(55);
+        encoderInterface.moveArmDown(50);
+        encoderInterface.goBackwards(-25);
+        encoderInterface.extendViperKit(-55);
         robotSampleServo.setPower(0);
         encoderInterface.extendViperKit(0);
         viperKit.setPower(0);
 
         //Park after hanging sample.
         encoderInterface.goStraight(20);
-        encoderInterface.turnRight((int) 45);
-        encoderInterface.goStraight(95);
-        encoderInterface.turnLeft((int) 45);
+        encoderInterface.turnLeft((int) 55);
+        encoderInterface.goStraight(-95);
+        encoderInterface.turnRight((int) 55);
         encoderInterface.goBackwards(38);
         telemetry.addData("Status", "Ended");
     }
