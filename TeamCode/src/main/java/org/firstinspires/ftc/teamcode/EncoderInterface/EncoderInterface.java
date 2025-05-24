@@ -73,7 +73,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void turnRight(int distance) {
+    public void turnRight(int distance) {
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
         hangSampleAndPark.backRight.setTargetPosition(-target);
         hangSampleAndPark.backLeft.setTargetPosition(target);
@@ -96,7 +96,7 @@ public class EncoderInterface {
         hangSampleAndPark.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    void turnLeft(int distance) {
+    public void turnLeft(int distance) {
         //For some reason the simulator does not accepted casted values.
         int target = (int) ((distance * 10 / hangSampleAndPark.circumference) * hangSampleAndPark.ticks);
 
