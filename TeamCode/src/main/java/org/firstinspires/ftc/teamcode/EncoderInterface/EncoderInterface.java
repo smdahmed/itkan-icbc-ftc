@@ -39,7 +39,7 @@ public class EncoderInterface {
         hangSampleAndPark.backRight.setPower(0.5);
         hangSampleAndPark.backLeft.setPower(0.5);
         while (hangSampleAndPark.backRight.isBusy() && hangSampleAndPark.backLeft.isBusy()) {
-            hangSampleAndPark.telemetry.addData("Path", "Going straighte: Current position: %s Target Position:%s",
+            hangSampleAndPark.telemetry.addData("Path", "Going straight: Current position: %s Target Position:%s",
                     hangSampleAndPark.backRight.getCurrentPosition(), hangSampleAndPark.backRight.getTargetPosition());
             hangSampleAndPark.telemetry.update();
         }

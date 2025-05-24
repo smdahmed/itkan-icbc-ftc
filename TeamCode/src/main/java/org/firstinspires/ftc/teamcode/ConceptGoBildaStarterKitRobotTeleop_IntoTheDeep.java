@@ -85,7 +85,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     public DcMotor  leftDrive   = null; //the left drivetrain motor
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
-    public Servo    claw        = null; //the servo for claw
+    public CRServo    claw        = null; //the servo for claw
     // public Servo    wrist       = null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
     public DcMotor backRight    = null;
@@ -179,7 +179,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         frontLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
         frontRight = hardwareMap.get(DcMotor.class, "right_front_drive");
         //myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        claw = hardwareMap.get(Servo.class, "claw");
+        claw = hardwareMap.get(CRServo.class, "claw");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
@@ -246,8 +246,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         while (opModeIsActive()) {
             //SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double y = gamepad1.left_stick_x;
-            double x = -gamepad1.left_stick_y * 1.5;  // Adjust for imperfect strafing
+            double y = gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x * 1.5;  // Adjust for imperfect strafing
             double rotation = gamepad1.right_stick_x;
 
             double frontLeftPower = y - x + rotation;
@@ -284,14 +284,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             //ANYTHING related to arm/intake will be set to gamepad2 so operator can have seperate controller
 
             if (gamepad2.a) {
-                claw.setPosition(clawClosed);
+                claw.setPower(clawClosed);
             }
             else if (gamepad2.x) {
-                claw.setPosition(clawOpen);
+                claw.setPower(clawOpen);
             }
-            //else if (gamepad2.b) {
-            //    intake.setPower(INTAKE_DEPOSIT);
-            //}
+            else if (gamepad2.b) {
+                claw.setPower(INTAKE_DEPOSIT);
+            }
             //Boost Button (WIP)
             //if (gamepad1.right_trigger > 0.0) {
                 //leftDrive.setPower(1.0);
@@ -302,12 +302,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 leftButtonIsDown = !leftButtonIsDown;
             }
 
-            /* Here we implement a set of if else statements to set our arm to different scoring positions.
-            We check to see if a specific button is pressed, and then move the arm (and sometimes
-            intake and wrist) to match. For example, if we click the right bumper we want the robot
-            to start collecting. So it moves the armPosition to the ARM_COLLECT position,
-            it folds out the wrist to make sure it is in the correct orientation to intake, and it
-            turns the intake on to the COLLECT mode.*/
 
             if(gamepad2.right_bumper){
                 /* This is the setup for intaking from the submersible. Press left trigger to extend and pick up samples from submersible */
