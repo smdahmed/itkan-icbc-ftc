@@ -22,25 +22,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.pedropathing.localization.PoseUpdater;
-import com.pedropathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.pedropathing.localization.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /*
  * This OpMode is an example driver-controlled (TeleOp) mode for the goBILDA 2024-2025 FTC
@@ -76,18 +64,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * The intake wheels are powered by a goBILDA Speed Servo (2000-0025-0003) in Continuous Rotation mode.
  */
 
-
-@TeleOp(name="FTC Starter Kit Example Robot (INTO THE DEEP)", group="Robot")
+@TeleOp(name="BetaTeleop", group="Robot")
 //@Disabled
-public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMode {
-
+public class BetaTeleop extends LinearOpMode {
     /* Declare OpMode members. */
     public DcMotor  leftDrive   = null; //the left drivetrain motor
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
-    public CRServo  intake      = null; //the servo for claw
+    public CRServo  intake      = null; //the active intake servo
     // public Servo    wrist       = null; //the wrist servo
-    public DcMotor viperKit     = null; // the viper kit!!!
+    public DcMotor  viperKit    = null; // the viper kit!!!
     public DcMotor backRight    = null;
     public DcMotor backLeft     = null;
     public DcMotor frontLeft    = null;
@@ -124,16 +110,14 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     as far from the starting position, decrease it. */
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-    final double ARM_COLLECT               = 5 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
-    final double BELOLWARMCOLLECT          = 7 * ARM_TICKS_PER_DEGREE;
-    final double ARM_GET_SAMPLE            = 55 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
+    final double ARM_COLLECT               = 20 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
+    final double ARM_GET_SAMPLE            = 30 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
-    final double ARM_ATTACH_HANGING_HOOK   = 180 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 100 * ARM_TICKS_PER_DEGREE;
+    final double ARM_ATTACH_HANGING_HOOK   = 140 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
-    final double VIPER_OUT                 = -4 * 360;
-    final double VIPER_PARTIAL             = (1 * 360) * VIPER_TICKS_PER_DEGREE;
-    final double ARM_INIT                  = 80 * ARM_TICKS_PER_DEGREE;
+    final double VIPER_OUT                 = (-4 * 360 - 3) * VIPER_TICKS_PER_DEGREE;
+    final double ARM_INIT                  = 3 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
@@ -145,7 +129,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     // final double WRIST_FOLDED_IN   = 0;
     // final double WRIST_FOLDED_OUT  = 0.8;
 
-    boolean leftButtonIsDown = false;
     /* A number in degrees that the triggers can adjust the arm position by */
     //final double FUDGE_FACTOR = 10 * ARM_TICKS_PER_DEGREE;
 
@@ -176,15 +159,12 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
         frontLeft = hardwareMap.get(DcMotor.class, "left_front_drive");
         frontRight = hardwareMap.get(DcMotor.class, "right_front_drive");
-        //myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
-        intake = hardwareMap.get(CRServo.class, "intake");
 
 
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
         for this robot, we reverse the right motor.*/
         backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        viperKit.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
 
         /* Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to slow down
@@ -215,11 +195,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Setting TargetPosition to 0, setting runMode to RUN_TO_POSITION. Also asking it to stop and reset encoder
         viperKit.setTargetPosition((int) viperPosition);
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperKit.setPower(0.5);
         viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperKit.setPower(0.5);
 
         /* Define and initialize servos.*/
-
+        intake = hardwareMap.get(CRServo.class, "intake");
         // wrist  = hardwareMap.get(Servo.class, "wrist");
 
         /* Make sure that the intake is off, and the wrist is folded in. */
@@ -234,18 +214,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Set the velocity of the motor and use setMode to run
 //        ((DcMotorEx) viperKit).setVelocity(1600);
         /* Run until the driver presses stop */
-        configureOtos();
-
-        armMotor.setTargetPosition((int) (armPosition));
-        // Reduced arm velocity so it wouldn't jitter when moving
-        ((DcMotorEx) armMotor).setVelocity(1600);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         while (opModeIsActive()) {
-            //SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double y = gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.5;  // Adjust for imperfect strafing
+            double y = gamepad1.left_stick_x;
+            double x = -gamepad1.left_stick_y * 1.5;  // Adjust for imperfect strafing
             double rotation = gamepad1.right_stick_x;
 
             double frontLeftPower = y - x + rotation;
@@ -292,19 +264,23 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             }
             //Boost Button (WIP)
             //if (gamepad1.right_trigger > 0.0) {
-                //leftDrive.setPower(1.0);
-                //rightDrive.setPower(1.0);
+            //leftDrive.setPower(1.0);
+            //rightDrive.setPower(1.0);
 
             //}
-            if (gamepad2.left_stick_button) {
-                leftButtonIsDown = !leftButtonIsDown;
-            }
 
+            /* Here we implement a set of if else statements to set our arm to different scoring positions.
+            We check to see if a specific button is pressed, and then move the arm (and sometimes
+            intake and wrist) to match. For example, if we click the right bumper we want the robot
+            to start collecting. So it moves the armPosition to the ARM_COLLECT position,
+            it folds out the wrist to make sure it is in the correct orientation to intake, and it
+            turns the intake on to the COLLECT mode.*/
 
             if(gamepad2.right_bumper){
                 /* This is the setup for intaking from the submersible. Press left trigger to extend and pick up samples from submersible */
-                armPosition = BELOLWARMCOLLECT;
+                armPosition = ARM_COLLECT;
                 // wrist.setPosition(WRIST_FOLDED_OUT);
+                intake.setPower(INTAKE_COLLECT);
             }
 
             else if (gamepad2.left_bumper){
@@ -328,7 +304,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 intake.setPower(INTAKE_OFF);
                 // wrist.setPosition(WRIST_FOLDED_IN);
                 viperPosition = VIPER_INIT;
-                viperKit.setTargetPosition((int) (viperPosition));
             }
 
             else if (gamepad2.dpad_up){
@@ -346,26 +321,21 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             }
             else if (gamepad2.left_trigger > 0.0){
                 // Extends the viper kit out
-                viperPosition = VIPER_OUT; //CHE
-                viperKit.setTargetPosition((int) (VIPER_OUT));
-                if (armPosition == BELOLWARMCOLLECT) {
+                viperPosition = VIPER_OUT;
+                if (armPosition == ARM_INIT){
                     viperPosition = 0;
                     viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
-
             }
             else if (gamepad2.right_trigger > 0.0){
                 // Retracts the viper kit back in
-                viperPosition = VIPER_INIT; //CHE
-
-                viperKit.setTargetPosition((int) (viperPosition));
+                viperPosition = 0;
             }
             else if (gamepad2.dpad_right){
-
-
                 viperPosition = VIPER_INIT;
-                viperKit.setTargetPosition((int) (viperPosition));
+                viperKit.setPower(0.5);
 
+                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             //Endgame Auto Hang (By pressing PS Central Button):
             else if (gamepad1.guide){
@@ -375,14 +345,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             }
 
-            else if (gamepad1.left_stick_button) {
-                // you added it to the wrong gamepad
-            }
-
             else if (gamepad2.left_stick_button){
-                viperPosition = VIPER_PARTIAL;
-
-                viperKit.setTargetPosition((int) (viperPosition));
+                inSub();
+                intake.setPower(INTAKE_COLLECT);
+                sleep(500);
+                armMotor.setTargetPosition((int) ARM_COLLECT);
             }
 
             else if (gamepad2.right_stick_button){
@@ -446,16 +413,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
             telemetry.addData("viperKitTarget: ", viperKit.getTargetPosition());
             telemetry.addData("viperKitCurrPosition: ", viperKit.getCurrentPosition());
-            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
-            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
-            telemetry.addLine();
-
-            // Log the position to the telemetry
-//            telemetry.addData("X coordinate", pos.x);
-//            telemetry.addData("Y coordinate", pos.y);
-//            telemetry.addData("Heading angle", pos.h);
-
-            // Update the telemetry on the driver static
             telemetry.update();
 
         }
@@ -465,7 +422,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(2100);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(INTAKE_COLLECT);
+        intake.setPower(INTAKE_OFF);
         sleep(1500);
         armMotor.setTargetPosition((int) (ARM_WINCH_ROBOT));
         // Reduced arm velocity so it wouldn't jitter when moving
@@ -483,11 +440,11 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         armMotor.setTargetPosition((int) (ARM_GET_SAMPLE)); // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(1600);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(INTAKE_COLLECT);
+        intake.setPower(INTAKE_OFF);
         sleep(1500);
 
         // intake on
-        intake.setPower(INTAKE_OFF);
+        intake.setPower(INTAKE_COLLECT);
         //Extend Viper Kit in submersible
         viperPosition = VIPER_OUT;
         viperKit.setTargetPosition((int) VIPER_OUT);
@@ -495,91 +452,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Bring arm down to intake better
-        intake.setPower(INTAKE_OFF);
+        intake.setPower(INTAKE_COLLECT);
         sleep(500);
         armMotor.setTargetPosition((int) ARM_COLLECT);
-    }
-
-    public void configureOtos() {
-        telemetry.addLine("Configuring OTOS...");
-        telemetry.update();
-
-        // Set the desired units for linear and angular measurements. Can be either
-        // meters or inches for linear, and radians or degrees for angular. If not
-        // set, the default is inches and degrees. Note that this setting is not
-        // persisted in the sensor, so you need to set at the start of all your
-        // OpModes if using the non-default value.
-        // myOtos.setLinearUnit(DistanceUnit.METER);
-        //myOtos.setLinearUnit(DistanceUnit.INCH);
-        // myOtos.setAngularUnit(AnguleUnit.RADIANS);
-        //myOtos.setAngularUnit(AngleUnit.DEGREES);
-
-        // Assuming you've mounted your sensor to a robot and it's not centered,
-        // you can specify the offset for the sensor relative to the center of the
-        // robot. The units default to inches and degrees, but if you want to use
-        // different units, specify them before setting the offset! Note that as of
-        // firmware version 1.0, these values will be lost after a power cycle, so
-        // you will need to set them each time you power up the sensor. For example, if
-        // the sensor is mounted 5 inches to the left (negative X) and 10 inches
-        // forward (positive Y) of the center of the robot, and mounted 90 degrees
-        // clockwise (negative rotation) from the robot's orientation, the offset
-        // would be {-5, 10, -90}. These can be any value, even the angle can be
-        // tweaked slightly to compensate for imperfect mounting (eg. 1.3 degrees).
-        //SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
-//        /myOtos.setOffset(offset);
-
-        // Here we can set the linear and angular scalars, which can compensate for
-        // scaling issues with the sensor measurements. Note that as of firmware
-        // version 1.0, these values will be lost after a power cycle, so you will
-        // need to set them each time you power up the sensor. They can be any value
-        // from 0.872 to 1.127 in increments of 0.001 (0.1%). It is recommended to
-        // first set both scalars to 1.0, then calibrate the angular scalar, then
-        // the linear scalar. To calibrate the angular scalar, spin the robot by
-        // multiple rotations (eg. 10) to get a precise error, then set the scalar
-        // to the inverse of the error. Remember that the angle wraps from -180 to
-        // 180 degrees, so for example, if after 10 rotations counterclockwise
-        // (positive rotation), the sensor reports -15 degrees, the required scalar
-        // would be 3600/3585 = 1.004. To calibrate the linear scalar, move the
-        // robot a known distance and measure the error; do this multiple times at
-        // multiple speeds to get an average, then set the linear scalar to the
-        // inverse of the error. For example, if you move the robot 100 inches and
-        // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-//        myOtos.setLinearScalar(1.0);
-//        myOtos.setAngularScalar(1.0);
-
-        // The IMU on the OTOS includes a gyroscope and accelerometer, which could
-        // have an offset. Note that as of firmware version 1.0, the calibration
-        // will be lost after a power cycle; the OTOS performs a quick calibration
-        // when it powers up, but it is recommended to perform a more thorough
-        // calibration at the start of all your OpModes. Note that the sensor must
-        // be completely stationary and flat during calibration! When calling
-        // calibrateImu(), you can specify the number of samples to take and whether
-        // to wait until the calibration is complete. If no parameters are provided,
-        // it will take 255 samples and wait until done; each sample takes about
-        // 2.4ms, so about 612ms total
-//        myOtos.calibrateImu();
-
-        // Reset the tracking algorithm - this resets the position to the origin,
-        // but can also be used to recover from some rare tracking errors
-//        myOtos.resetTracking();
-
-        // After resetting the tracking, the OTOS will report that the robot is at
-        // the origin. If your robot does not start at the origin, or you have
-        // another source of location information (eg. vision odometry), you can set
-        // the OTOS location to match and it will continue to track from there.
-        //SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
-//        myOtos.setPosition(currentPosition);
-
-        // Get the hardware and firmware version
-        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
-        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
-//        myOtos.getVersionInfo(hwVersion, fwVersion);
-
-        telemetry.addLine("OTOS configured! Press start to get position data!");
-        telemetry.addLine();
-        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
-        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
-        telemetry.update();
     }
 
     public void outSub(){
