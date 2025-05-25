@@ -77,7 +77,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 
-@TeleOp(name="FTC Starter Kit Example Robot (INTO THE DEEP)", group="Robot")
+@TeleOp(name="TELEOP", group="Robot")
 //@Disabled
 public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMode {
 
@@ -124,15 +124,15 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     as far from the starting position, decrease it. */
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-    final double ARM_COLLECT               = 5 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
+    final double ARM_COLLECT               = 15 * ARM_TICKS_PER_DEGREE; //Changed from 230 --> 30 because of new intake system.
     final double BELOLWARMCOLLECT          = 7 * ARM_TICKS_PER_DEGREE;
-    final double ARM_GET_SAMPLE            = 55 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
+    final double ARM_GET_SAMPLE            = 30 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 123 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 180 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
     final double VIPER_OUT                 = -4 * 360;
-    final double VIPER_PARTIAL             = (1 * 360) * VIPER_TICKS_PER_DEGREE;
+    final double VIPER_PARTIAL             = (1.1 * 360) * VIPER_TICKS_PER_DEGREE;
     final double ARM_INIT                  = 80 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
 
@@ -244,9 +244,9 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
         while (opModeIsActive()) {
             //SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double y = gamepad1.left_stick_y;
+            double y = gamepad1.right_stick_x;
             double x = gamepad1.left_stick_x * 1.5;  // Adjust for imperfect strafing
-            double rotation = gamepad1.right_stick_x;
+            double rotation = gamepad1.right_stick_y;
 
             double frontLeftPower = y - x + rotation;
             double frontRightPower = y - x - rotation;
@@ -330,10 +330,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 // wrist.setPosition(WRIST_FOLDED_IN);
                 viperPosition = VIPER_INIT;
                 viperKit.setTargetPosition((int) (viperPosition));
-
-                viperKit.setPower(0.5);
-
-                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
             else if (gamepad2.dpad_up){
@@ -345,7 +341,7 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             else if (gamepad2.dpad_down){
                 /* this moves the arm down to lift the robot up once it has been hooked */
-                armPosition = ARM_WINCH_ROBOT;
+                armPosition = ARM_COLLECT;
                 intake.setPower(INTAKE_OFF);
                 // wrist.setPosition(WRIST_FOLDED_IN);
             }
@@ -353,31 +349,18 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
                 // Extends the viper kit out
                 viperPosition = VIPER_OUT; //CHE
 
-                viperKit.setPower(0.5);
-                viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
             }
             else if (gamepad2.right_trigger > 0.0){
                 // Retracts the viper kit back in
                 viperPosition = VIPER_INIT; //CHE
 
                 viperKit.setTargetPosition((int) (viperPosition));
-
-                viperKit.setPower(0.5);
-
-                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             else if (gamepad2.dpad_right){
 
 
                 viperPosition = VIPER_INIT;
                 viperKit.setTargetPosition((int) (viperPosition));
-
-                viperKit.setPower(0.5);
-
-                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
             }
             //Endgame Auto Hang (By pressing PS Central Button):
             else if (gamepad1.guide){
@@ -393,12 +376,6 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
 
             else if (gamepad2.left_stick_button){
                 viperPosition = VIPER_PARTIAL;
-
-                viperKit.setTargetPosition((int) (viperPosition));
-
-                viperKit.setPower(0.5);
-
-                viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
             else if (gamepad2.right_stick_button){
