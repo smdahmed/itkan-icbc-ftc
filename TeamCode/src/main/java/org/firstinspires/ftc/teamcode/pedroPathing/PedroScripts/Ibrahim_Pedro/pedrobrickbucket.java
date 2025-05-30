@@ -43,6 +43,7 @@ public class pedrobrickbucket extends OpMode {
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
     double viperPosition = (int) VIPER_INIT;
 
+
     /* Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
      * Pedro uses 0 - 144 for x and y, with 0, 0 being on the bottom left.
@@ -83,6 +84,8 @@ public class pedrobrickbucket extends OpMode {
                     * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                     * 1/360.0;
     final double ARM_INIT                  = 80 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
+    final double ARM_GET_SAMPLE            = 55 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     double armPosition = (int) ARM_INIT;
 
 
@@ -173,12 +176,9 @@ public class pedrobrickbucket extends OpMode {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup2,true);
                     setPathState(4);
-
+                    viperPosition = 4*360;
+                    armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
                 }
-                viperPosition = -4*360;
-                viperKit.setTargetPosition((int) viperPosition);
-                viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viperKit.setPower(0.5);
                 break;
         }
     }
@@ -199,7 +199,14 @@ public class pedrobrickbucket extends OpMode {
 
         follower.update();
         autonomousPathUpdate();
-
+        viperKit.setTargetPosition((int) viperPosition);
+        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperKit.setPower(0.5);
+        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setTargetPosition((int) (armPosition));
+        // Reduced arm velocity so it wouldn't jitter when moving
+        ((DcMotorEx) armMotor).setVelocity(1600);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -211,14 +218,6 @@ public class pedrobrickbucket extends OpMode {
     public void init() {
         viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
         armMotor = hardwareMap.get(DcMotor.class, "left_arm");
-        viperKit.setTargetPosition((int) viperPosition);
-        viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viperKit.setPower(0.5);
-        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setTargetPosition((int) (armPosition));
-        // Reduced arm velocity so it wouldn't jitter when moving
-        ((DcMotorEx) armMotor).setVelocity(1600);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
