@@ -170,7 +170,7 @@ public class EncoderInterface {
         hangSampleAndPark.arm.setTargetPosition(15);
         hangSampleAndPark.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangSampleAndPark.arm.setPower(1);
-        hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "claw");
+        hangSampleAndPark.robotSampleServo = hangSampleAndPark.hardwareMap.get(CRServo.class, "intake");
 
         hangSampleAndPark.backRight.setDirection(DcMotor.Direction.REVERSE);
         hangSampleAndPark.backLeft.setDirection(DcMotor.Direction.FORWARD);
