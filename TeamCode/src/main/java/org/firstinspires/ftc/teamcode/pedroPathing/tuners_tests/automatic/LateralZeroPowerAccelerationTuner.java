@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.automatic;
 
 import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
+import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
 import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
 import static com.pedropathing.follower.FollowerConstants.rightFrontMotorName;
 import static com.pedropathing.follower.FollowerConstants.rightRearMotorName;
@@ -114,10 +115,10 @@ public class LateralZeroPowerAccelerationTuner extends OpMode {
      */
     @Override
     public void start() {
-        leftFront.setPower(1);
-        leftRear.setPower(-1);
-        rightFront.setPower(-1);
-        rightRear.setPower(1);
+        leftFront.setPower(-1);
+        leftRear.setPower(1);
+        rightFront.setPower(1);
+        rightRear.setPower(-1);
     }
 
     /**
