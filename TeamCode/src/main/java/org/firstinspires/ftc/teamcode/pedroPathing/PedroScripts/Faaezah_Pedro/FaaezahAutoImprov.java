@@ -36,10 +36,8 @@ public class FaaezahAutoImprov extends OpMode {
     @Override
     public void init() {
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-
         //follower is being initalized and used in the program
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
 
         /* BezierLine (heart of Pedro Pathing) is advanced mathematics that helps to 'pathing' of
            robot. N.B: Faaezah, start learning about BezierLine mathematics!
