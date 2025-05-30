@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -72,11 +73,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class TeleOPAlishba extends LinearOpMode {
 
     /* Declare OpMode members. */
+
     public DcMotor  leftDrive   = null; //the left drivetrain motor
     public DcMotor  rightDrive  = null; //the right drivetrain motor
     public DcMotor  armMotor    = null; //the arm motor
-    public CRServo  intake      = null; //the active intake servo
-    // public Servo    wrist       = null; //the wrist servo
+    public CRServo  intake             = null; //the active intake servo
+    public Servo wrist= null; //the wrist servo
     public DcMotor  viperKit    = null; // the viper kit!!!
     public DcMotor backRight    = null;
     public DcMotor backLeft     = null;
@@ -256,8 +258,6 @@ public class TeleOPAlishba extends LinearOpMode {
             /* Set the motor power to the variables we've mixed and normalized */
             leftDrive.setPower(left);
             rightDrive.setPower(right);
-
-
 
             /* Here we handle the three buttons that have direct control of the intake speed.
             These control the continuous rotation servo that pulls elements into the robot,
