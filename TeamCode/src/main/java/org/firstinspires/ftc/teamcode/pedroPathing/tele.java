@@ -168,6 +168,7 @@ public class tele extends LinearOpMode {
         armMotor.setTargetPosition((int) ARM_COLLECT);
     }
 
+
     public void outSub() {
         viperPosition = 0;
     }
