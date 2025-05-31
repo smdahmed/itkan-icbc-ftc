@@ -128,10 +128,10 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
     final double BELOLWARMCOLLECT          = 7 * ARM_TICKS_PER_DEGREE;
     final double ARM_GET_SAMPLE            = 55 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE + 30;
     final double ARM_ATTACH_HANGING_HOOK   = 180 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 15  * ARM_TICKS_PER_DEGREE;
-    final double VIPER_OUT                 = -4 * 360;
+    final double VIPER_OUT                 = -4 * 380 + 30;
     final double VIPER_PARTIAL             = (1.1 * 360) * VIPER_TICKS_PER_DEGREE;
     final double ARM_INIT                  = 80 * ARM_TICKS_PER_DEGREE;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
