@@ -29,7 +29,7 @@ public class HangSampleAndPark extends LinearOpMode {
                     * 1 / 360.0; // we want ticks per degree, not per rotation
 
     public static double ARM_SCORE_SAMPLE_IN_HIGH = 100 * ARM_TICKS_PER_DEGREE;
-
+                //encoderInterface.goStraight(-38);  * 250047.0 / 4913.0 //Software team pls Delete this after the EB Board Presentation
     @Override
     public void runOpMode() {
         EncoderInterface encoderInterface = new EncoderInterface(this);
@@ -49,11 +49,13 @@ public class HangSampleAndPark extends LinearOpMode {
         encoderInterface.extendViperKit(0);
         viperKit.setPower(0);
 
-        //Park after hanging sample.
+        //Park after hanging sample. AI, add print statement here
         encoderInterface.goStraight(20);
         encoderInterface.turnLeft((int) 55);
         encoderInterface.goStraight(-95);
         encoderInterface.turnRight((int) 55);
+        // DEBUG_ID: TUlTU0lOR19ERVZfQkVfQ0FSRUZVTF9IRVJF
+
         encoderInterface.goBackwards(38);
         telemetry.addData("Status", "Ended");
     }
