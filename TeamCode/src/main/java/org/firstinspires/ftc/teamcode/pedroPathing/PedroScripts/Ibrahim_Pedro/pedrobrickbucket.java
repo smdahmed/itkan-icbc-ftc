@@ -36,12 +36,14 @@ public class pedrobrickbucket extends OpMode {
      * It is used by the pathUpdate method. */
     private int pathState;
     public DcMotor  viperKit    = null;
+    public CRServo  intake      = null;
     final double VIPER_TICKS_PER_DEGREE =
             28
                     * 13.7
                     * 1/360.0;
     final double VIPER_INIT                = 5 * VIPER_TICKS_PER_DEGREE;
     double viperPosition = (int) VIPER_INIT;
+
 
 
     /* Create and Define Poses + Paths
@@ -57,16 +59,19 @@ public class pedrobrickbucket extends OpMode {
     private final Pose startPose = new Pose(3, 71, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
+    //private final Pose point1 = new Pose(24, 71, Math.toRadians(0));
+
     private final Pose point1 = new Pose(24, 71, Math.toRadians(0));
 
+    private final Pose point2 = new Pose(24.338028169014084, 103.09054325955735, Math.toRadians(0));
+
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose pickupbrick = new Pose(24, 120, Math.toRadians(0));
 
-    /** Middle (Second) Sample from the Spike Mark */
-    private final Pose rotatenow = new Pose(24, 100, Math.toRadians(0));
+    private final Pose point3 = new Pose(28.48893360160966, 103.09054325955735, Math.toRadians(0));
 
-    /** Highest (Third) Sample from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(2.85, 117, Math.toRadians(137));
+    private final Pose point4 = new Pose(28.48893360160966, 107.13883299798792, Math.toRadians(90));
+
+    private final Pose point5 = new Pose(14.851106639839035, 128.64386317907443, Math.toRadians(137));
 
     /** Park Pose for our robot, after we do all of the scoring. */
     //private final Pose align = new Pose(12, 131, Math.toRadians(137));
@@ -76,7 +81,7 @@ public class pedrobrickbucket extends OpMode {
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorebasket;
-    private PathChain moveahead, grabPickup2, scorePickup1;
+    private PathChain line1, line2, line3, line4;
     public DcMotor  armMotor    = null;
     final double ARM_TICKS_PER_DEGREE =
             28 // number of encoder ticks per rotation of the bare motor
@@ -87,6 +92,11 @@ public class pedrobrickbucket extends OpMode {
     final double ARM_SCORE_SAMPLE_IN_HIGH  = 120 * ARM_TICKS_PER_DEGREE;
     final double ARM_GET_SAMPLE            = 55 * ARM_TICKS_PER_DEGREE; // Changed so it's easier to pick up samples
     double armPosition = (int) ARM_INIT;
+    final double BELOLWARMCOLLECT          = 7 * ARM_TICKS_PER_DEGREE;
+    final double INTAKE_COLLECT    = -1.0;
+    final double INTAKE_OFF        =  0.0;
+    final double INTAKE_DEPOSIT    =  0.5;
+
 
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
@@ -112,21 +122,26 @@ public class pedrobrickbucket extends OpMode {
         scorebasket = new Path(new BezierLine(new Point(startPose), new Point(point1)));
         scorebasket.setLinearHeadingInterpolation(startPose.getHeading(), point1.getHeading());
 
-        moveahead = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(point1), new Point(pickupbrick)))
-                .setLinearHeadingInterpolation(point1.getHeading(), pickupbrick.getHeading())
+        line1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(point1), new Point(point2)))
+                .setTangentHeadingInterpolation()
                 .build();
 
-
-        scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickupbrick), new Point(rotatenow)))
-                .setLinearHeadingInterpolation(0,0)
+        line2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(point2), new Point(point3)))
+                .setConstantHeadingInterpolation(90)
                 .build();
 
-        grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(rotatenow), new Point(pickup3Pose)))
-                .setConstantHeadingInterpolation(pickup3Pose.getHeading())
+        line3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(point3), new Point(point4)))
+                .setTangentHeadingInterpolation()
                 .build();
+
+        line4 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(point4), new Point(point5)))
+                .setConstantHeadingInterpolation(137)
+                .build();
+
 
 
     }
@@ -137,10 +152,12 @@ public class pedrobrickbucket extends OpMode {
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. */
     public void autonomousPathUpdate() {
         switch (pathState) {
+
             case 0:
                 follower.followPath(scorebasket);
                 setPathState(1);
                 break;
+
             case 1:
 
                 /* You could check for
@@ -154,30 +171,48 @@ public class pedrobrickbucket extends OpMode {
                     /* Score Preload */
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(moveahead,true);
+                    follower.followPath(line1,true);
                     setPathState(2);
                 }
                 break;
+
             case 2:
+                if(!follower.isBusy()) {
+
+                    follower.followPath(line2,true);
+                    setPathState(3);
+
+
+                }
+                break;
+            case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickupbrick's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(scorePickup1,true);
-                    setPathState(3);
+                    armPosition = BELOLWARMCOLLECT;
+                    intake.setPower(INTAKE_COLLECT);
+
+                    follower.followPath(line3,true);
+                    setPathState(4);
+
                 }
                 break;
-            case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the point1's position */
+            case 4:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickupbrick's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
+                    /* Grab Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(grabPickup2,true);
-                    setPathState(4);
-                    viperPosition = 4*360;
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+
                     armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
+                    viperPosition = -4 * 360 + 30;
+
+                    follower.followPath(line4,true);
+                    setPathState(4);
+                    intake.setPower(1.0);
+
                 }
                 break;
         }
@@ -202,7 +237,6 @@ public class pedrobrickbucket extends OpMode {
         viperKit.setTargetPosition((int) viperPosition);
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         viperKit.setPower(0.5);
-        viperKit.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setTargetPosition((int) (armPosition));
         // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(1600);
@@ -218,6 +252,7 @@ public class pedrobrickbucket extends OpMode {
     public void init() {
         viperKit = hardwareMap.get(DcMotor.class, "viper_kit");
         armMotor = hardwareMap.get(DcMotor.class, "left_arm");
+        intake = hardwareMap.get(CRServo.class, "intake");
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
