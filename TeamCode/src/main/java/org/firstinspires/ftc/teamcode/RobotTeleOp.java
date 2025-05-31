@@ -28,19 +28,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.pedropathing.localization.PoseUpdater;
-import com.pedropathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.pedropathing.localization.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /*
  * This OpMode is an example driver-controlled (TeleOp) mode for the goBILDA 2024-2025 FTC
@@ -77,9 +66,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 
-@TeleOp(name="FTC Starter Kit Example Robot (INTO THE DEEP)", group="Robot")
+@TeleOp(name="TELEOP", group="Robot")
 //@Disabled
-public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMode {
+public class RobotTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftDrive   = null; //the left drivetrain motor
@@ -292,8 +281,8 @@ public class ConceptGoBildaStarterKitRobotTeleop_IntoTheDeep extends LinearOpMod
             }
             //Boost Button (WIP)
             //if (gamepad1.right_trigger > 0.0) {
-                //leftDrive.setPower(1.0);
-                //rightDrive.setPower(1.0);
+            //leftDrive.setPower(1.0);
+            //rightDrive.setPower(1.0);
 
             //}
             if (gamepad2.left_stick_button) {
