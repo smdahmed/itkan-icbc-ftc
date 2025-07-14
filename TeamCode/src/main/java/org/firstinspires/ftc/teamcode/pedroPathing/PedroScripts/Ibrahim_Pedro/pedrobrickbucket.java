@@ -134,7 +134,7 @@ public class pedrobrickbucket extends OpMode {
 
         line3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(point3), new Point(point4)))
-                .setTangentHeadingInterpolation()
+                .setConstantHeadingInterpolation(90)
                 .build();
 
         line4 = follower.pathBuilder()
@@ -156,6 +156,7 @@ public class pedrobrickbucket extends OpMode {
             case 0:
                 follower.followPath(scorebasket);
                 setPathState(1);
+                telemetry.addData("path state", "0");
                 break;
 
             case 1:
@@ -173,6 +174,7 @@ public class pedrobrickbucket extends OpMode {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(line1,true);
                     setPathState(2);
+                    telemetry.addData("path state", "1");
                 }
                 break;
 
@@ -181,6 +183,7 @@ public class pedrobrickbucket extends OpMode {
 
                     follower.followPath(line2,true);
                     setPathState(3);
+                    telemetry.addData("Path state","2");
 
 
                 }
@@ -191,11 +194,10 @@ public class pedrobrickbucket extends OpMode {
                     /* Grab Sample */
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    armPosition = BELOLWARMCOLLECT;
-                    intake.setPower(INTAKE_COLLECT);
 
                     follower.followPath(line3,true);
                     setPathState(4);
+                    telemetry.addData("Path state", "3");
 
                 }
                 break;
@@ -206,14 +208,14 @@ public class pedrobrickbucket extends OpMode {
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
 
-                    armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
-                    viperPosition = -4 * 360 + 30;
 
                     follower.followPath(line4,true);
                     setPathState(4);
-                    intake.setPower(1.0);
+
+
 
                 }
+                telemetry.addData("Path state", "4");
                 break;
         }
     }
