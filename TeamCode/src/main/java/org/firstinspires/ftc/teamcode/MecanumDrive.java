@@ -200,7 +200,6 @@ public final class MecanumDrive {
                             rightFrontPosVel.velocity,
                     }).times(PARAMS.inPerTick)
             ));
-
             lastLeftFrontPos = leftFrontPosVel.position;
             lastLeftBackPos = leftBackPosVel.position;
             lastRightBackPos = rightBackPosVel.position;
