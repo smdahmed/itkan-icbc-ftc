@@ -210,7 +210,6 @@ public final class MecanumDrive {
                     twist.line.value(),
                     headingDelta
             ));
-
             return twist.velocity().value();
         }
     }
