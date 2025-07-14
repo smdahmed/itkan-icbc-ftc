@@ -204,7 +204,6 @@ public final class MecanumDrive {
             lastLeftBackPos = leftBackPosVel.position;
             lastRightBackPos = rightBackPosVel.position;
             lastRightFrontPos = rightFrontPosVel.position;
-
             lastHeading = heading;
 
             pose = pose.plus(new Twist2d(
