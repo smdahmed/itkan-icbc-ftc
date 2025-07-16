@@ -45,7 +45,6 @@ public class pedrobrickbucket extends OpMode {
     double viperPosition = (int) VIPER_INIT;
 
 
-
     /* Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
      * Pedro uses 0 - 144 for x and y, with 0, 0 being on the bottom left.
