@@ -7,25 +7,14 @@ import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Timer;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
-
-
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.pedropathing.localization.PoseUpdater;
-import com.pedropathing.util.DashboardPoseTracker;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @Autonomous(name = "auto pickup", group = "Examples")
 public class pedrobrickbucket extends OpMode {
@@ -56,22 +45,22 @@ public class pedrobrickbucket extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(3, 71, Math.toRadians(0));
+    private final Pose startPose = new Pose(3, 71);
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
     //private final Pose point1 = new Pose(24, 71, Math.toRadians(0));
 
-    private final Pose point1 = new Pose(24, 71, Math.toRadians(0));
+    private final Pose point1 = new Pose(24, 71);
 
-    private final Pose point2 = new Pose(24.338028169014084, 103.09054325955735, Math.toRadians(0));
+    private final Pose point2 = new Pose(24.338028169014084, 103.09054325955735);
 
     /** Lowest (First) Sample from the Spike Mark */
 
-    private final Pose point3 = new Pose(28.48893360160966, 103.09054325955735, Math.toRadians(0));
+    private final Pose point3 = new Pose(28.48893360160966, 103.09054325955735);
 
-    private final Pose point4 = new Pose(28.48893360160966, 107.13883299798792, Math.toRadians(90));
+    private final Pose point4 = new Pose(28.48893360160966, 107.13883299798792);
 
-    private final Pose point5 = new Pose(14.851106639839035, 128.64386317907443, Math.toRadians(137));
+    private final Pose point5 = new Pose(14.851106639839035, 128.64386317907443);
 
     /** Park Pose for our robot, after we do all of the scoring. */
     //private final Pose align = new Pose(12, 131, Math.toRadians(137));
@@ -124,22 +113,22 @@ public class pedrobrickbucket extends OpMode {
 
         line1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(point1), new Point(point2)))
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(0,0)
                 .build();
 
         line2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(point2), new Point(point3)))
-                .setConstantHeadingInterpolation(90)
+                .setLinearHeadingInterpolation(0,90)
                 .build();
 
         line3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(point3), new Point(point4)))
-                .setConstantHeadingInterpolation(90)
+                .setLinearHeadingInterpolation(90,90)
                 .build();
 
         line4 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(point4), new Point(point5)))
-                .setConstantHeadingInterpolation(137)
+                .setLinearHeadingInterpolation(90,-137)
                 .build();
 
 
@@ -156,7 +145,7 @@ public class pedrobrickbucket extends OpMode {
             case 0:
                 follower.followPath(scorebasket);
                 setPathState(1);
-                telemetry.addData("path state", "0");
+                telemetry.addData("path state", "1");
                 break;
 
             case 1:
@@ -174,7 +163,7 @@ public class pedrobrickbucket extends OpMode {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(line1,true);
                     setPathState(2);
-                    telemetry.addData("path state", "1");
+                    telemetry.addData("path state", "2");
                 }
                 break;
 
@@ -183,7 +172,7 @@ public class pedrobrickbucket extends OpMode {
 
                     follower.followPath(line2,true);
                     setPathState(3);
-                    telemetry.addData("Path state","2");
+                    telemetry.addData("Path state","3");
 
 
                 }
@@ -197,7 +186,7 @@ public class pedrobrickbucket extends OpMode {
 
                     follower.followPath(line3,true);
                     setPathState(4);
-                    telemetry.addData("Path state", "3");
+                    telemetry.addData("Path state", "4");
 
                 }
                 break;
@@ -210,12 +199,12 @@ public class pedrobrickbucket extends OpMode {
 
 
                     follower.followPath(line4,true);
-                    setPathState(4);
+                    setPathState(5);
 
 
 
                 }
-                telemetry.addData("Path state", "4");
+                telemetry.addData("Path state", "5");
                 break;
         }
     }
@@ -236,6 +225,12 @@ public class pedrobrickbucket extends OpMode {
 
         follower.update();
         autonomousPathUpdate();
+        // Feedback to Driver Hub
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.update();
         viperKit.setTargetPosition((int) viperPosition);
         viperKit.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         viperKit.setPower(0.5);
@@ -243,12 +238,6 @@ public class pedrobrickbucket extends OpMode {
         // Reduced arm velocity so it wouldn't jitter when moving
         ((DcMotorEx) armMotor).setVelocity(1600);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // Feedback to Driver Hub
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.update();
     }
     @Override
     public void init() {
