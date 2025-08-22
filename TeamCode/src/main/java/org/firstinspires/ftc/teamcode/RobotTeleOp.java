@@ -172,7 +172,7 @@ public class RobotTeleOp extends LinearOpMode {
         /* Most skid-steer/differential drive robots require reversing one motor to drive forward.
         for this robot, we reverse the right motor.*/
         backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
         viperKit.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -233,13 +233,13 @@ public class RobotTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             //SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double y = gamepad1.left_stick_y;
+            double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 1.5;  // Adjust for imperfect strafing
             double rotation = gamepad1.right_stick_x;
 
-            double frontLeftPower = y - x + rotation;
+            double frontLeftPower = y + x + rotation;
             double frontRightPower = y - x - rotation;
-            double backLeftPower = y + x + rotation;
+            double backLeftPower = y - x + rotation;
             double backRightPower = y + x - rotation;
 
             double maxPower = Math.max(1.0, Math.max(
